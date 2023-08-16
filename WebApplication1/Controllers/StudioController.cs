@@ -34,7 +34,7 @@ namespace WebApplication1.Controllers
 
         // POST api/<StudioController>
         [HttpPost]
-        public StudioDTO Post(StudioDTO Studio)
+        public StudioDTO Post([FromForm] StudioCreateDTO Studio)
         {
             return StudioService.AddStudio(Studio);
         }

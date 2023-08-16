@@ -25,14 +25,14 @@ namespace WebApplication1.Controllers
 
         // GET: api/<ActorController>
         [HttpGet]
-        public async Task<IEnumerable<ActorDTO>> Get()
+        public  ActionResult<IEnumerable<ActorDTO>> Get()
         {
 
             var ret = actorService.GetActors();
 
             
           
-            return ret;
+            return Ok(ret);
         }
 
        
@@ -40,11 +40,11 @@ namespace WebApplication1.Controllers
 
         // GET api/<ActorController>/5
         [HttpGet("{id}")]
-        public  string Get(int id)
+        public ActorDTO Get(int id)
         {
 
 
-            return "value";
+            return actorService.GetActor(id);
         }
 
         // POST api/<ActorController>
@@ -290,14 +290,16 @@ namespace WebApplication1.Controllers
 
         // PUT api/<ActorController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActorDTO Put(ActorDTO actor)
         {
+            return actorService.UpdateActor(actor);
         }
 
         // DELETE api/<ActorController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            actorService.DeleteActor(id);
         }
     }
 }

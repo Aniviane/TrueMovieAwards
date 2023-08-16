@@ -10,6 +10,7 @@ namespace WebApplication1.Data.Models
 
         public RoleAward(RoleAwardDTO awardDTO) : base(awardDTO)
         {
+            Roles = new List<Role>();
             foreach(var r in awardDTO.Roles)
             {
                 Roles.Add(new Role(r));

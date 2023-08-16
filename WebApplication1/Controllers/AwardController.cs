@@ -26,14 +26,27 @@ namespace WebApplication1.Controllers
 
         // GET api/<AwardController>/5
         [HttpGet("{id}")]
-        public AwardDTO Get(int id)
+        public AwardWrapperDTO Get(int id)
         {
             return AwardService.GetAward(id);
         }
 
         // POST api/<AwardController>
-        [HttpPost]
-        public AwardDTO Post(MovieAwardDTO Award)
+        [HttpPost("MovieAward")]
+        public AwardDTO AddMovieAward(MovieAwardDTO Award)
+        {
+            return AwardService.AddAward(Award);
+        }
+
+
+        [HttpPost("RoleAward")]
+        public AwardDTO AddRoleAward(RoleAwardDTO Award)
+        {
+            return AwardService.AddAward(Award);
+        }
+
+        [HttpPost("ProducingAward")]
+        public AwardDTO AddProducingAward(ProducerAwardDTO Award)
         {
             return AwardService.AddAward(Award);
         }

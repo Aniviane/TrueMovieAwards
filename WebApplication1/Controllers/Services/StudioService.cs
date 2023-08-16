@@ -9,19 +9,53 @@ namespace WebApplication1.Controllers.Services
     {
         private DataContext context;
 
+
+        private string serverPath = "https://localhost:7133";
+
         public StudioService(DataContext dataContext)
         {
             context = dataContext;
         }
-        public StudioDTO AddStudio(StudioDTO Studio)
+        public  StudioDTO AddStudio(StudioCreateDTO Studio)
         {
-            var st = new Studio(Studio);
+            
 
-            context.Studios.Add(st);
+            if (Studio != null && Studio.photo != null && Studio.photo.Length >0 )
+            {
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
-            context.SaveChanges();
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "../../Pictures/Studios", folderName);
 
-            return new StudioDTO(st);
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(Studio.photo.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                     Studio.photo.CopyToAsync(stream);
+                }
+
+                var st = new Studio();
+                st.Name = Studio.name;
+                st.Description = Studio.description;
+                st.Photo = serverPath + "/Pictures/Studios/" + folderName + imageName;
+
+                st.Movies = new List<Movie>();
+                context.Studios.Add(st);
+
+                context.SaveChanges();
+
+                return new StudioDTO(st);
+
+            }
+
+
+            return null;
 
 
         }

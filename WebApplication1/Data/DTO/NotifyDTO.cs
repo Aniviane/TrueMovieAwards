@@ -10,6 +10,7 @@ namespace WebApplication1.Data.DTO
 
         public string description { get; set; }
 
+        public long NotificationId { get; set; }
         public long AwardId { get; set; }
 
 
@@ -17,6 +18,7 @@ namespace WebApplication1.Data.DTO
         {
             Seen = notify.Seen;
             description = notify.Notification.Description;
+            NotificationId = notify.NotificationId;
             AwardId = notify.Notification.AwardId;
         }
 

@@ -1,0 +1,207 @@
+<p>movie-create works!</p>
+
+<h4> Adding a movie </h4>
+
+
+<form [formGroup]="movieForm">
+    <table class="center-table">
+        <tr>
+            <td> <label>Movie Title: </label></td> <td> <input type="text" formControlName="title"></td>
+        </tr>
+        <tr>
+            <td><label>Movie Description: </label></td> <td> <input type="text" formControlName="description"></td>
+        </tr>
+        <tr>
+            <td><label>Date of Release: </label></td> <td> <input type="date" formControlName="dateOfRelease"></td>
+        </tr>
+        <tr>
+            <td><label>Movie Photo: </label></td> <td> <input type="text" formControlName="photo"></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label>Roles:</label> <br>
+                <ul>
+                    <li *ngFor="let role of RolesToAdd; index as i">
+                        <img [src]="makeMyUrlSafe(role.actor.photo)" class="Bigthumbnail"> <p>{{role.actor.fname}} {{role.actor.lname}} AS {{role.fName}} {{role.lName}}</p>
+                        <button (click)="removeRole(i)"> Remove Role </button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#RoleModal">Add Role</button></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label>Producers:</label> <br>
+                <ul>
+                    <li *ngFor="let producing of ProducingsToAdd; index as i">
+                        <img [src]="makeMyUrlSafe(producing.producer.photo)" class="Bigthumbnail"> <p>{{producing.producer.fName}} {{producing.producer.lName}}</p> 
+                        <button (click)="removeProducing(i)"> Remove producer </button>
+                    </li>
+                </ul>
+                
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProducingModal">Add Producer</button></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label>Genres:</label> <br>
+                <ul>
+                    <li *ngFor="let genre of GenresToAdd; index as i">
+                        <p>{{genre.name}}</p>
+                        <button (click)="removeGenre(i)"> Remove Genre </button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#GenreModal">Add Genre</button></td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <label>Series:</label> <br>
+                <select  name="seriesId" formControlName="seriesId">
+                    <option [value]="0"> No Series </option>
+                    <option *ngFor="let series of Series" [value]="series.id">
+                      {{series.fName}}
+                       
+                    </option>
+                 </select>
+                 
+        
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <label>Studios:</label> <br>
+                <select  name="studioId" formControlName="studioId">
+                    <option [value]="0"> No Studio </option>
+                    <option *ngFor="let studio of Studios" [value]="studio.id">
+                      {{studio.name}}
+                       
+                    </option>
+                 </select>
+                 
+        
+            </td>
+        </tr>
+        
+        <tr>
+            <td colspan="2"><button type="button" class="btn btn-primary" (click)="addMovie()">Add Movie</button></td>
+        </tr>
+    </table>
+</form>
+
+
+
+    <!-- ProducingModal -->
+    <div class="modal fade" id="ProducingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form (ngSubmit)="AddProducing()">
+            <div class="modal-body">
+              <p>Please Select your producer</p>
+      
+             <select [(ngModel)]="producingId" name="producingId">
+                <option *ngFor="let producer of Producers" [value]="producer.id">
+                  
+                    {{producer.fName}} {{producer.lName}}
+                </option>
+             </select>
+             <br>
+            
+             
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary"  >Add Producer</button>
+              
+            </div>
+        </form>
+          </div>
+        </div>
+        </div>
+    
+    
+    
+    <!-- ProducingModal -->
+    <div class="modal fade" id="GenreModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form (ngSubmit)="addGenre()">
+            <div class="modal-body">
+              <p>Please Select your producer</p>
+      
+             <select [(ngModel)]="genreId" name="producingId">
+                <option *ngFor="let genre of Genres" [value]="genre.id">
+                  
+                    {{genre.name}}
+                </option>
+             </select>
+             <br>
+            
+             
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary"  >Add Producer</button>
+              
+            </div>
+        </form>
+          </div>
+        </div>
+        </div>
+
+
+  <!-- RoleModal -->
+  <div class="modal fade" id="RoleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="AddRole()">
+        <div class="modal-body">
+          <p>Please enter your Role Details</p>
+            
+          <label>Select the actor</label>
+         <select id="actor" [(ngModel)]="actorid" name="actorid">
+            <option *ngFor="let actor of Actors" [value]="actor.id">
+                
+                {{actor.fName}} {{actor.lName}}
+            </option>
+         </select>
+         <br>
+         <label>Roles First Name:</label>
+         <input type="text" [(ngModel)]="roleFName" name="roleFName"> <br>
+         <label>Roles Last Name:</label>
+         <input type="text" [(ngModel)]="roleLName" name="roleLName">
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  >Add Role</button>
+          
+        </div>
+    </form>
+      </div>
+    </div>
+    </div>
+

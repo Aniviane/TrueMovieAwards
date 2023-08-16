@@ -31,7 +31,10 @@ builder.Services.AddAuthentication(options =>
     };
 }
 );
-
+builder.Services.AddCors(options => options.AddPolicy(name: "MovieAwardsOrigins", policy =>
+{
+    policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+}));
 
 
 builder.Services.AddControllers();
@@ -42,6 +45,7 @@ builder.Services.AddScoped<IProducer, ProducerService>();
 builder.Services.AddScoped<IFestival, FestivalService>();
 builder.Services.AddScoped<IHolding, HoldingService>();
 builder.Services.AddScoped<IAward, AwardService>();
+builder.Services.AddScoped<IGenre, GenreService>();
 builder.Services.AddScoped<IMovie, MovieService>();
 builder.Services.AddScoped<ISeries, SeriesService>();
 builder.Services.AddScoped<IStudio, StudioService>();
@@ -68,6 +72,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+
+app.UseCors("MovieAwardsOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

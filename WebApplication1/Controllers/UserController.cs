@@ -46,8 +46,8 @@ namespace WebApplication1.Controllers
             return UserService.Register(User);
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
+        // PUT api/<UserController>/
+        [HttpPut]
         public UserDTO Put(UserDTO User)
         {
             return UserService.UpdateUser(User);
@@ -60,6 +60,14 @@ namespace WebApplication1.Controllers
             UserService.DeleteUser(id);
         }
 
+
+        [HttpPut("UpdateNotify")]
+        [Authorize]
+        public void UpdateNotify(long id)
+        {
+            UserService.UpdateNotify(id);
+        }
+
         [HttpPost("LeaveReview")]
         public UpReviewDTO LeaveReview(UpReviewDTO upReviewDTO)
         {
@@ -70,7 +78,7 @@ namespace WebApplication1.Controllers
         [Authorize]
         public void Favorize(FavoriseDTO favoriseDTO)
         {
-            var t = Request.HttpContext.User.Claims;
+            
              UserService.FavSomething(favoriseDTO);
             
         }

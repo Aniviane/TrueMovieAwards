@@ -11,6 +11,7 @@ namespace WebApplication1.Data.Models
 
         public ProducerAward(ProducerAwardDTO awardDTO) : base(awardDTO)
         {
+            Producings = new List<ProducingMovie>();
             foreach (var pr in awardDTO.Producings)
             {
                 Producings.Add(new ProducingMovie(pr));

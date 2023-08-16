@@ -8,7 +8,7 @@ namespace WebApplication1.Controllers.Services.Interfaces
 
         public List<AwardWrapperDTO> GetAwards();
 
-        public AwardDTO GetAward(long id);
+        public AwardWrapperDTO GetAward(long id);
 
         public AwardDTO UpdateAward(AwardDTO Award);
 

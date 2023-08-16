@@ -1,10 +1,11 @@
-﻿using WebApplication1.Data.DTO;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Data.DTO;
 
 namespace WebApplication1.Controllers.Services.Interfaces
 {
     public interface IStudio
     {
-        public StudioDTO AddStudio(StudioDTO studio);
+        public StudioDTO AddStudio(StudioCreateDTO studio);
 
         public List<StudioDTO> GetStudios();
 

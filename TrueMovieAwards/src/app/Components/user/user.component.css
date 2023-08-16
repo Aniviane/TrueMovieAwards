@@ -1,0 +1,16 @@
+.center-table {
+    text-align: center;
+    justify-self: center;
+}
+
+table {
+    border-width: 2;
+    border-style: solid;
+
+}
+tr{
+    border-style: solid;
+}
+td {
+    border-style: solid;
+}

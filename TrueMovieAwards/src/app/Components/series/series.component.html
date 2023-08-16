@@ -1,0 +1,22 @@
+<p>series works!</p>
+<div *ngIf="!singleDataFlag">
+<table >
+    <tr *ngFor="let series of Series">
+        <td><a routerLink="/Series/{{series.id}}">{{series.fName}}</a></td>
+        <td><ul>
+            <li *ngFor="let movie of series.movies">
+                <a routerLink="/Movies/{{movie.id}}">{{movie.title}}</a>
+            </li>
+        </ul></td>
+    </tr>
+</table>
+</div>
+<div *ngIf="singleDataFlag">
+
+    <h5> {{singleSeries.fName}} </h5>
+
+    <ul>
+        <li *ngFor="let movie of singleSeries.movies"> <a routerLink="/Movies/{{movie.id}}">{{movie.title}}</a></li>
+    </ul>
+
+</div>

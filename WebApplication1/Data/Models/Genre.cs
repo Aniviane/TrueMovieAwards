@@ -1,4 +1,6 @@
-﻿namespace WebApplication1.Data.Models
+﻿using WebApplication1.Data.DTO;
+
+namespace WebApplication1.Data.Models
 {
     public class Genre
     {
@@ -7,7 +9,11 @@
 
         public virtual List<Movie> Movies { get; set; }
 
-
+        public Genre(GenreDTO genre)
+        {
+            FName = genre.FName;
+            Movies = new List<Movie>();
+        }
         public Genre() { }
     }
 }

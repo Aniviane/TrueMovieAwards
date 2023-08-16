@@ -14,7 +14,7 @@ namespace WebApplication1.Controllers.Services.Interfaces
 
         public UserDTO UpdateUser(UserDTO User);
 
-
+        public void UpdateNotify(long id);
         public UpReviewDTO LeaveReview(UpReviewDTO reviewDTO);
 
         public void DeleteUser(long id);

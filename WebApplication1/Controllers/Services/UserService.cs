@@ -37,7 +37,7 @@ namespace WebApplication1.Controllers.Services
         public void FavSomething(FavoriseDTO favoriseDTO)
         {
             // long userId = 3; //temp untill JWT is implemented
-            var t = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+           
             if (_httpContextAccessor == null) return;
             long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
             var user = context.Users.Find(userId);
@@ -90,6 +90,23 @@ namespace WebApplication1.Controllers.Services
                 return new UserDTO(ret);
             return null;
         }
+
+
+        public void UpdateNotify(long id)
+        {
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null) return;
+            long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+
+            var notify = context.Notifies.Find(userId, id);
+
+            if (notify == null) return;
+            notify.Seen = true;
+
+            context.SaveChanges();
+
+
+        }
+
 
         public List<UserDTO> GetUsers()
         {
@@ -155,7 +172,32 @@ namespace WebApplication1.Controllers.Services
 
             context.SaveChanges();
 
-            return new UserDTO(userTemp);
+            var ret = new UserDTO(userTemp);
+
+            List<Claim> claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.Role, ret.UType));
+            claims.Add(new Claim(ClaimTypes.SerialNumber, ret.ID.ToString()));
+            SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TrueMovieAwardsTrueMovieAwardsTrueMovieAwardsTrueMovieAwards"));
+            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            var tokenOptions = new JwtSecurityToken(
+                issuer: "https://localhost:7133/",
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: signinCredentials
+                ); ;
+            string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+
+            
+            ret.Token = token;
+
+
+
+
+
+
+            return  ret;
 
 
         }

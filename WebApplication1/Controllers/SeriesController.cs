@@ -19,7 +19,6 @@ namespace WebApplication1.Controllers
         }
         // GET: api/<SeriesController>
         [HttpGet]
-        [Authorize(Roles = "Moderator")]
         public IEnumerable<SeriesDTO> Get()
         {
             var ret = SeriesService.GetSeries();
@@ -42,6 +41,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("AddMovie")]
+        [Authorize(Roles = "Moderator")]
         public SeriesDTO AddMovie(SeriesDTO Series)
         {
             return SeriesService.AddMovie(Series);
@@ -50,6 +50,7 @@ namespace WebApplication1.Controllers
 
         // PUT api/<SeriesController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Moderator")]
         public SeriesDTO Put(SeriesDTO Series)
         {
             return SeriesService.UpdateSeries(Series);
@@ -57,6 +58,7 @@ namespace WebApplication1.Controllers
 
         // DELETE api/<SeriesController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Moderator")]
         public void Delete(int id)
         {
             SeriesService.DeleteSeries(id);

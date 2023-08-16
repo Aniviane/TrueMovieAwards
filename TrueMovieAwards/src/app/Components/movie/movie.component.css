@@ -1,0 +1,14 @@
+.center-table {
+    text-align: center;
+    justify-self: center;
+}
+
+.center-table td  {
+    max-width: 70;
+    max-height: 80;
+}
+
+.center-div {
+    display: flex;
+    justify-content: center;
+}

@@ -32,18 +32,18 @@ namespace WebApplication1.Controllers.Services
                 }
 
 
-                    var hol = context.Holdings.Find(rev.HoldingId);
-                    if (hol == null)
-                        return null;
+                var hol = context.Holdings.Find(rev.HoldingId);
+                if (hol == null)
+                    return null;
 
-                    rev.Holding = hol;
+                rev.Holding = hol;
 
-                    context.Awards.Add(rev);
+                context.Awards.Add(rev);
 
-                    context.SaveChanges();
+                context.SaveChanges();
 
-                    CreateNotification(rev);
-                    return new MovieAwardDTO(rev);
+                CreateNotification(rev);
+                return new MovieAwardDTO(rev);
 
 
                 
@@ -52,56 +52,54 @@ namespace WebApplication1.Controllers.Services
             if(Award.AwardType == "Producer") {
 
                 var rev = new ProducerAward((ProducerAwardDTO)Award);
-
+                var producings = new List<ProducingMovie>();
                 foreach (var pr in rev.Producings.ToList())
                 {
-                    var prod = context.Producers.Find(pr.ProducerId);
-                    var m = context.Movies.Find(pr.MovieId);
-
-                    if (prod == null)
-                        return null;
-                    if (m == null)
-                        return null;
-                    pr.Movie = m;
-                    pr.Producer = prod;
-
-                    var hol = context.Holdings.Find(rev.HoldingId);
-                    if (hol == null)
-                        return null;
-
-                    rev.Holding = hol;
-
-                    context.Awards.Add(rev);
-
-                    context.SaveChanges();
-
-                    CreateNotification(rev);
-
-                    return new ProducerAwardDTO(rev);
+                    var producing = context.Producings.Find(pr.MovieId, pr.ProducerId );
+                    if (producing == null) return null;
+                    producings.Add(producing);
 
 
                 }
+
+                rev.Producings = producings;
+
+                var hol = context.Holdings.Find(rev.HoldingId);
+                if (hol == null)
+                    return null;
+
+                rev.Holding = hol;
+
+                context.Awards.Add(rev);
+
+                context.SaveChanges();
+
+                CreateNotification(rev);
+
+                return new ProducerAwardDTO(rev);
+
+
+                
 
 
             }
             if(Award.AwardType == "Role") {
 
                 var rev = new RoleAward((RoleAwardDTO)Award);
-            
+                var rewards = new List<Role>();
+
                 foreach(var r in rev.Roles.ToList())
                 {
-                    var ac =context.Actors.Find(r.ActorId);
-                    var m = context.Movies.Find(r.MovieId);
+                    var role = context.Roles.Find(r.ID);
+                    if (role == null) return null;
 
-                    if (ac == null)
-                        return null;
-                    if (m == null)
-                        return null;
-                    r.Movie = m;
-                    r.Actor = ac;
+                    rewards.Add(role);
 
 
                 }
+
+                rev.Roles = rewards;
+
 
                 var hol = context.Holdings.Find(rev.HoldingId);
                 if (hol == null)
@@ -138,11 +136,11 @@ namespace WebApplication1.Controllers.Services
 
         }
 
-        public AwardDTO GetAward(long id)
+        public AwardWrapperDTO GetAward(long id)
         {
             var a = context.Awards.Find(id);
             if (a != null)
-                return new AwardDTO(a);
+                return new AwardWrapperDTO(a);
             else
                 return null;
         }
@@ -165,9 +163,10 @@ namespace WebApplication1.Controllers.Services
             var ac = context.Awards.Find(Award.ID);
             if (ac != null)
             {
-             
+                ac.Name = Award.Name;
+                
 
-                context.Entry(ac).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+              
 
                 context.SaveChanges();
 

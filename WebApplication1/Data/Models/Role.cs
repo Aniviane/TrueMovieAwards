@@ -22,6 +22,7 @@ namespace WebApplication1.Data.Models
 
         public Role(DownRoleDTO downRoleDTO)
         {
+            ID = downRoleDTO.ID;
             FName = downRoleDTO.FName;
             LName = downRoleDTO.LName;
             ActorId = downRoleDTO.Actor.ID;
