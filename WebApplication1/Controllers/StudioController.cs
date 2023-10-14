@@ -59,5 +59,11 @@ namespace WebApplication1.Controllers
         {
             StudioService.DeleteStudio(id);
         }
+
+        [HttpPut("UpdatePhoto")]
+        public void updatePhoto([FromForm] PhotoUpdateDTO dto)
+        {
+            StudioService.UpdatePhoto(dto);
+        }
     }
 }

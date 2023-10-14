@@ -1,0 +1,32 @@
+
+
+.mainDiv {
+    background-color:khaki;
+    justify-content: center;
+
+    padding-top: 5%;
+}
+
+
+
+.center-table {
+    text-align: center;
+    justify-content: center;
+    justify-self: center;
+    margin: auto;
+    padding-top: 5%;
+    display: ruby;
+}
+
+.subDiv {
+    margin-left: 4%;
+    margin-right: 4%;
+    background-color:rgb(240, 233, 169);
+    justify-content: center;
+}
+
+.searchField {
+    justify-content: center;
+    align-content: center;
+    display: flex;
+}

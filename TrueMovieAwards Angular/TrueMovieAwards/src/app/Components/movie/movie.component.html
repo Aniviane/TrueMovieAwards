@@ -1,0 +1,276 @@
+
+<div *ngIf="!singleDataFlag" class="mainDiv" >
+  <div class="searchField">
+    <input style="width: 500px;" class="form-control" placeholder="Search Movies" name="searchField" [(ngModel)]="searchField">
+    <button class="btn btn-secondary" (click)="search()">Search Movies</button>
+  </div>
+ 
+  <div class="container" >
+    
+    <div class="row">
+        <div class="col-6 col-md-4 col-lg-3" *ngFor="let movie of searchData" style=" margin-top: 5%; margin-bottom: 5%;">
+            <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+            
+              <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+            <div class="card-body">
+              <h6 class="card-title">{{movie.title}}</h6>
+              <p class="card-text">{{movie.description}}</p>
+            <div class="card-footer">
+              <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+            </div>
+        </div>    
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="singleDataFlag" class="mainDiv" >
+<div class="container" style="display: flex;">
+  <button (click)="setUpdateData()" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateMovieModal"> Update Movie </button>
+  <button (click)="setMovieId(singleMovie.id)" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal"> Update photo </button>
+  <button  *ngIf="amIGeneral() " (click)="favoriseMovie(singleMovie.id)" type="button" class="btn btn-primary"> Add Movie to Favorites</button>
+  <button *ngIf="amIGeneral() " (click)="addToWatchlist(singleMovie.id)" type="button" class="btn btn-primary"> Add Movie to Watchlist</button>
+  <button *ngIf="amIGeneral()"  type="button" class="btn btn-primary" data-toggle="modal" data-target="#ReviewModal"> Leave a Review</button>
+  
+</div>
+    <table *ngIf="singleMovie" class="center-table" >
+        
+      
+ 
+        <tr>
+        <td colspan="2"><img [src]="makeMyUrlSafe(singleMovie.photo)" style="max-width: 500px; max-height: 600;">  </td>
+        
+        </tr>
+        <tr>
+           <td colspan="2"> <p>{{singleMovie.title}} </p></td>
+          
+        </tr>
+        <tr>
+          <td> <p> Review Grade: {{singleMovie.revGrade}}/5</p></td>
+          <td><p> Date of Release: {{gimmeDate(singleMovie.dateOfRelease).getDate()}}/{{gimmeDate(singleMovie.dateOfRelease).getMonth() + 1}}/{{gimmeDate(singleMovie.dateOfRelease).getFullYear()}}</p></td>
+    
+            
+        </tr>
+      
+        <tr >
+            <td *ngIf="singleMovie.series"><a routerLink="/Series/{{singleMovie.series.id}}"> <p> Series : {{singleMovie.series.fName}}</p> </a></td>
+            <td *ngIf="!singleMovie.series"> Standalone movie </td>
+            <td *ngIf="singleMovie.studio">  <a routerLink="/Studios/{{singleMovie.studio.id}}"> <p> Studio : {{singleMovie.studio.name}}</p></a></td>
+            <td *ngIf="!singleMovie.studio"> Self Production</td>
+        </tr>
+        <tr>
+          <td colspan="2" ><p>Description: {{singleMovie.description}}</p></td>
+        </tr>
+    </table>
+
+
+   <hr style="border-width: 10px;">
+
+
+  <h5 style="text-align: center;">Producers:</h5>
+
+    
+  <div class="row">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let producing of singleMovie.producings" style=" margin-top: 5%; margin-bottom: 5%;">
+      <div class="card" >
+      
+        <img class="card-img-top"  [src]="makeMyUrlSafe(producing.producer.photo)" alt="movie photo" routerLink="/Producers/{{producing.producer.id}}">
+      <div class="card-body">
+        <h6 class="card-title" style="text-align: center;">{{producing.producer.fName}} {{producing.producer.lName}}</h6>
+      <div class="card-footer" style="justify-content: center; display: flex;">
+        <button type="button" class="btn btn-primary" routerLink="/Producers/{{producing.producer.id}}">Details</button>
+      </div>
+   </div>    
+</div>
+</div>
+</div>
+
+    <hr style="border-width: 10px;">
+
+    <h5 style="text-align: center;">Roles</h5>
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let role of singleMovie.roles" style=" margin-top: 5%; margin-bottom: 5%;">
+        <div class="card" >
+        
+          <img class="card-img-top"  [src]="makeMyUrlSafe(role.actor.photo)" alt="movie photo" routerLink="/Actors/{{role.actor.id}}">
+        <div class="card-body">
+          <h6 class="card-title" style="text-align: center;">{{role.actor.fname}} {{role.actor.lname}}</h6>
+          <p style="text-align: center;">AS</p>
+          <h6 class="card-title" style="text-align: center;">{{role.fName}} {{role.lName}}</h6>
+        <div class="card-footer" style="justify-content: center; display: flex;">
+          <button type="button" class="btn btn-primary" routerLink="/Actors/{{role.actor.id}}">Actor Details</button>
+        </div>
+     </div>    
+  </div>
+  </div>
+  </div>
+
+    <hr style="border-width: 10px;">
+
+    <h6 *ngIf="singleMovie.movieAwards.length > 0" style="text-align: center;"> Awards</h6>
+    <table class="center-table">
+        <tr *ngFor="let award of singleMovie.movieAwards">
+            <td>
+                <a routerLink="/Awards/{{award.id}}">{{award.name}}</a>
+            </td>
+        </tr>
+    </table>
+
+     <hr style="border-width: 10px;">
+
+    <div *ngIf="singleMovie.reviews.length > 0">
+    <h6 style="text-align: center;"> Reviews </h6>
+    <table *ngFor="let rev of singleMovie.reviews" class="center-table" >
+        <tr>
+            <td  ><img  [src]="makeMyUrlSafe(rev.reviewer.uPhoto)" class="thumbnail" alt="Reviewer"></td>
+            <td class="center-cell"> <p>{{gimmeDate(rev.revTime).getDay()}}/{{gimmeDate(rev.revTime).getMonth()}}/{{gimmeDate(rev.revTime).getFullYear()}} </p></td>
+        </tr>
+        <tr>
+          <td colspan="2">{{rev.reviewer.username}}</td> 
+    
+           </tr>
+           <tr>
+            <td colspan="2"> {{rev.description}}</td>
+        </tr>
+        <tr>
+          <td colspan="2"><p> {{rev.grade}}/5 </p></td>
+        </tr>
+    </table>
+    </div>
+
+    
+</div>
+
+<div class="modal fade" id="ReviewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="reviewForm" (ngSubmit)="leaveAReview()">
+        <div class="modal-body">
+          <p>Please enter your Review details</p>
+  
+          
+            <label>Review Text:</label>
+            <input class="form-control" type="text" formControlName="description"><br>
+            <label>Review Grade (1-5) :</label>
+            <input class="form-control" type="number" formControlName="revGrade"><br>
+           
+          <p *ngIf="reviewFlag == 1" style="color : limegreen">Review Added!</p>
+          <p *ngIf="reviewFlag == -1" style="color : red">You already left a review for this movie.</p>
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" [disabled]="reviewForm.invalid">Leave Review</button>
+        </div>
+    </form>
+      </div>
+    </div>
+    </div>
+
+
+
+
+    
+    
+  <!-- ActorModal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please select the updated movie photo.</p>
+  
+          <label for="aUPhoto">Movie Photo: </label>
+          <input class="form-control" type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateMoviePhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+       
+ 
+  <div class="modal fade" id="updateMovieModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateMovie()">
+        <div class="modal-body">
+          <p>Please enter your Movie Data</p>
+  
+        
+
+            <label for="fName">Movie Title: </label>
+            <input type="text" #fName name="MovieTitle" [(ngModel)]="updateMovieData.title"><br>
+            <label for="lName">Movie Description: </label>
+            <input type="text" #lName name="MovieDesc" [(ngModel)]="updateMovieData.description"><br>
+           
+            <label>  Movie Date of release</label>
+            <input type="date" name="MovieDoR" [(ngModel)]="updateMovieData.dateOfRelease">
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" >Update Movie</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+
+    
+  <div class="modal fade" id="updateRoleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateRole()">
+        <div class="modal-body">
+          <p>Please enter your Role Data</p>
+  
+        
+
+            <label for="fName">Role First Name: </label>
+            <input type="text" #fName name="RoleFname" [(ngModel)]="updateRoleData.fname"><br>
+            <label for="lName">Role Last Name: </label>
+            <input type="text" #lName name="RoleLname" [(ngModel)]="updateRoleData.lname"><br>
+           
+          
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" >Update Movie</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

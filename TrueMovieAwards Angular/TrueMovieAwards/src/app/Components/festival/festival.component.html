@@ -1,0 +1,387 @@
+
+
+
+
+<div class="container" style="margin-bottom: 5%;" *ngIf="!singleDataFlag" class="mainDiv">
+  <button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#FestivalModal"> Add A Festival</button>
+
+  <div class="searchField"><input style="width: 500px;" class="form-control" placeholder="Search Festivals" name="searchField" [(ngModel)]="searchField"> <button class="btn btn-secondary" (click)="search()">Search Festivals</button></div>
+ 
+  <div class="row">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let festival of searchData" style=" margin-top: 5%; margin-bottom: 5%;">
+      <div class="card" >
+        <img class="card-img-top"  [src]="makeMyUrlSafe(festival.photo)" alt="movie photo" routerLink="/Festivals/{{festival.id}}">
+      <div class="card-body">
+        <h6 class="card-title">{{festival.name}}</h6>
+        <p class="card-text">{{festival.description}}</p>
+      <div class="card-footer">
+        <button type="button" class="btn btn-primary" routerLink="/Festivals/{{festival.id}}">Details</button>
+      </div>
+   </div>    
+</div>
+</div>
+</div>
+</div>
+
+
+<div *ngIf="singleDataFlag" class="mainDiv"> 
+
+<div class="container" style="display: flex;">
+  <button (click)="setFestivalData()" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateFestivalModal"> Update Festival </button>
+  <button (click)="setFestivalId(singleFestival.id)" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal"> Update photo </button>
+  <button (click)="setFestivalId(singleFestival.id)" data-toggle="modal" data-target="#HoldingModal" *ngIf="amIModerator()">Add Holding</button>
+
+</div>
+
+    <table class="center-table">
+      
+        <tr>
+            <td><img [src]="makeMyUrlSafe(singleFestival.photo)"></td>
+           
+        </tr>
+        <tr>
+          <td><h3>{{singleFestival.name}}</h3></td>
+        </tr>
+        <tr>
+            <td > {{singleFestival.description}} </td>
+        </tr>
+    </table>
+
+    <hr style="border-width: 10px;">
+    <h6 *ngIf="singleFestival.holdings.length > 0" style="text-align: center;"> Holdings </h6>
+
+    <div *ngIf="singleFestival.holdings.length > 0" >
+        <div *ngFor="let holding of singleFestival.holdings">
+            <table class="center-table">
+            <tr>
+                    <td colspan="2"> {{holding.name}}</td>
+            </tr>
+            <tr>
+                <td><p>{{holding.city}}</p></td>  <td><p>{{holding.year}}</p></td>
+            </tr>
+            
+             </table>
+            <h6 *ngIf="holding.roleAwards.length > 0" style="text-align: center;">Role awards</h6>
+            <div *ngFor="let ra of holding.roleAwards" class="center-div">
+
+              <div class="mainDiv">
+        
+                <div class="container" style="margin-bottom: 5%;"  >
+                    <h3 style="text-align: center;"> {{ra.name}}</h3>
+                       <div class="row" style="display: flex; justify-content: center;">
+                        <div class="col-12 col-md-6 col-lg-4" *ngFor="let role of ra.roles" style=" margin-top: 5%; margin-bottom: 5%;">
+                          <div class="card" >
+                          
+                            <img class="card-img-top"  [src]="makeMyUrlSafe(role.actor.photo)" alt="movie photo" routerLink="/Actors/{{role.actor.id}}">
+                          <div class="card-body">
+                            <h6 class="card-title" style="text-align: center;">{{role.actor.fname}} {{role.actor.lname}}</h6>
+                            <p style="text-align: center;"> AS </p>
+                            <h6 class="card-title" style="text-align: center;">{{role.fName}} {{role.lName}}</h6>
+                            <p style="text-align: center;"> IN THE MOVIE </p>
+                            <h6 class="card-title" style="text-align: center;">{{role.movie.title}}</h6>
+                          <div class="card-footer" style="display: flex; justify-content: center;">
+                            <button type="button" class="btn btn-primary" routerLink="/Actors/{{role.actor.id}}">Actor Details</button>
+                            <button type="button" class="btn btn-primary" routerLink="/Movies/{{role.movie.id}}">Movie Details</button>
+                          </div>
+                       </div>    
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+            
+                  
+              </div>
+            </div>
+            <h6 *ngIf="holding.movieAwards.length > 0" style="text-align: center;">Movie awards</h6>
+            <div *ngFor="let ma of holding.movieAwards">
+                
+                
+              <div class="mainDiv">
+                    
+                <h2 style="text-align: center;"> {{ma.name}}</h2>
+                <div class="container" >
+                    <div class="row">
+                      <div class="col-12 col-md-6 col-lg-4" *ngFor="let movie of ma.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+                        <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+                          <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+                        <div class="card-body">
+                          <h6 class="card-title">{{movie.title}}</h6>
+                        <div class="card-footer" style="display: flex; justify-content: center;">
+                          <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+                        </div>
+                    </div>    
+                  </div>
+                </div>
+                </div>
+                </div>
+             </div> 
+            </div>
+
+            <h6 *ngIf="holding.producerAwards.length > 0" style="text-align: center;">Producing awards</h6>
+            <div *ngFor="let pa of holding.producerAwards">
+
+              <div class="mainDiv">
+                <div class="container" style="margin-bottom: 5%;">
+                   
+                <h3 style="text-align: center;"> {{pa.name}}</h3>
+                    <div class="row">
+                      <div class="col-12 col-md-6 col-lg-4" *ngFor="let producing of pa.producings" style=" margin-top: 5%; margin-bottom: 5%;">
+                        <div class="card" >
+                        
+                          <img class="card-img-top"  [src]="makeMyUrlSafe(producing.producer.photo)" alt="movie photo" routerLink="/Producers/{{producing.producer.id}}">
+                        <div class="card-body">
+                          <h6 class="card-title" style="text-align: center;">{{producing.producer.fName}} {{producing.producer.lName}}</h6>
+                          <p class="card-text" style="text-align: center;">FOR THE PRODUCTION OF</p>
+                          <h6 class="card-title" style="text-align: center;">{{producing.movie.title}}</h6>
+                        <div class="card-footer">
+                          <button type="button" class="btn btn-primary" routerLink="/Producers/{{producing.producer.id}}">Producers Details</button>
+                          <button type="button" class="btn btn-primary" routerLink="/Movies/{{producing.movie.id}}">Movies Details</button>
+                        </div>
+                     </div>    
+                  </div>
+                </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <button (click)="setHoldingId(holding.id)" type="button" class="btn btn-primary" data-toggle="modal" data-target="#AwardModal" *ngIf="amIModerator()">Add Award</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+ 
+  <div class="modal fade" id="FestivalModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+          <form [formGroup]="festivalForm">
+
+            <label for="fName">Festival name: </label>
+            <input class="form-control" type="text" #fName formControlName="name" ><br>
+            <label for="lName">Festival Description </label>
+            <input class="form-control" type="text" #lName  formControlName="description"><br>
+          
+            <label for="aPhoto">Festival Photo: </label>
+            <input class="form-control" type="file" #aPhoto  (change)="onChange($event)"><br>
+           
+            
+          </form>
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" [disabled]="festivalForm.invalid"  (click)="addFestival()" >Add Festival</button>
+        </div>
+      </div>
+    </div>
+ </div>
+
+
+
+
+    <div class="modal fade" id="HoldingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Please enter your registration credentials</p>
+      
+              <form [formGroup]="holdingForm">
+    
+                <label for="fName">Holding name: </label>
+                <input class="form-control" type="text" #fName formControlName="name" ><br>
+                <label for="lName">Holding City </label>
+                <input class="form-control" type="text" #lName  formControlName="city"><br>
+              
+                <label for="aPhoto">Holding Year: </label>
+                <input class="form-control" type="number" #aPhoto  formControlName="year"><br>
+               
+                
+              </form>
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" [disabled]="holdingForm.invalid" data-dismiss="modal" (click)="addHolding()" >Add Holding</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+
+
+    
+  <div class="modal fade" id="AwardModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please enter your Award credentials</p>
+          
+          <label>Award Type</label>
+          <select class="form-control" [(ngModel)]="awardType">
+            <option>Role Award</option>
+            <option>Movie Award</option>
+            <option>Producing Award</option>
+          </select>
+         <hr>
+          <form *ngIf="awardType == ('Movie Award')" [formGroup]="movieForm">
+            <label>Award Name</label>
+            <input type="text" #anm required formControlName="awardName"><br>
+            <label>Recieving Movie:</label>
+            <select class="form-control"  name="movieId"  formControlName="movieId">
+              <option *ngFor="let movie of Movies" [value]="movie.id">
+                
+                  {{movie.title}}
+              </option>
+           </select>
+           <button [disabled]="movieForm.invalid" (click)="addMovie()">Add Movie Recipient</button>
+           <br>
+           <p> Movie Recipients:</p>
+           <p *ngIf="movieRecipients.length == 0">No movie recipients selected</p>
+           <ul>
+            <li *ngFor="let movie of movieRecipients">
+                
+              {{movie.title}}
+            </li>
+           </ul>
+           <br>
+           <button type="submit" [disabled]="movieRecipients.length == 0"  (click)="addMovieAward()"> Submit Movie Award</button>
+           <br>
+          </form>
+          <form *ngIf="awardType == ('Role Award')" [formGroup]="roleForm" >
+            <label>Award Name</label>
+            <input class="form-control" type="text" #anr required formControlName="awardName" ><br>
+            <label>Recieving Role:</label>
+            <select  class="form-control" name="roleId" formControlName="roleId">
+              <option *ngFor="let role of Roles" [value]="role.id" >
+                
+                  {{role.actor.fname}} {{role.actor.lname}} -- AS -- {{role.fName}} {{role.lName}}   
+              </option>
+           </select>
+           <button [disabled]="roleForm.invalid" (click)="addRole()">Add Role Recipient</button>
+           <br>
+           <p> Award Recipients:</p>
+           <p *ngIf="roleRecipients.length == 0"></p>
+           <ul>
+            <li *ngFor=" let role of roleRecipients">
+              {{role.actor.fname}} {{role.actor.lname}} -- AS -- {{role.fName}} {{role.lName}}   
+            </li>
+           </ul>
+           <br>
+           <button type="submit" [disabled]="roleRecipients.length == 0" (click)="addRoleAward()"> Submit Role Award</button>
+           <br>
+          </form>
+
+
+          <form *ngIf="awardType == ('Producing Award')" [formGroup]="producingForm" >
+            <label>Award Name</label>
+            <input class="form-control" type="text" #anp required formControlName="awardName"><br>
+            <select class="form-control"  name="producingId" formControlName="producingIndex">
+              <label>Recieving Producing:</label>
+              <option *ngFor="let producing of Producings; index as i" [value]="i">
+                
+                  {{producing.producer.fName}} {{producing.producer.lName}} -- FOR THE PRODUCTION OF -- {{producing.movie.title}} 
+              </option>
+           </select>
+           <button [disabled]="producingForm.invalid" (click)="addProducing()">Add Producing Recipient</button>
+           <br>
+           <p> Producing Recipients:</p>
+           <p *ngIf="producingRecipients.length == 0"> No producings selected</p>
+           <ul>
+            <li *ngFor="let producing of producingRecipients">
+                
+              {{producing.producer.fName}} {{producing.producer.lName}} -- FOR THE PRODUCTION OF -- {{producing.movie.title}} 
+            </li>
+           </ul>
+           <br>
+           <button type="submit" [disabled]="producingRecipients.length == 0" (click)="addProducingAward()"> Submit Producing Award</button>
+           <br>
+          </form>
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+ </div>
+
+
+ 
+
+    
+  <!-- ActorModal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+          <label for="aUPhoto">Festival Photo: </label>
+          <input class="form-control" type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateFestivalPhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+  
+    
+  <div class="modal fade" id="updateFestivalModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateFestival()">
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+        
+
+            <label for="fName">Festival Name: </label>
+            <input class="form-control" type="text" #fName name="actorfName" [(ngModel)]="updateFestivalData.name"><br>
+            <label for="lName">Festival Description: </label>
+            <input class="form-control" type="text" #lName name="actorLName" [(ngModel)]="updateFestivalData.description"><br>
+         
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" >Update Festival</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

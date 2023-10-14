@@ -30,5 +30,20 @@ namespace WebApplication1.Data.Models
 
         
         }
+
+
+        public Producer(ProducerCreateDTO producerDTO)
+        {
+
+            FName = producerDTO.FName;
+            LName = producerDTO.LName;
+            Photo = "";
+            DoB = DateTime.Parse(producerDTO.DoB);
+            Bio = producerDTO.Bio;
+            Producings = new List<ProducingMovie>();
+            Favorites = new List<User>();
+
+
+        }
     }
 }

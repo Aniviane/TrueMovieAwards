@@ -1,0 +1,197 @@
+
+
+
+<div class="container" style="margin-bottom: 5%;" *ngIf="!singleDataFlag" class="mainDiv">
+<button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ActorModal" style="margin: auto;"> Add An Actor</button>
+
+  
+<div class="searchField">
+  <input style="width: 500px;" class="form-control" placeholder="Search Actors" name="searchField" [(ngModel)]="searchField">
+   <button class="btn btn-secondary" (click)="search()">Search Users</button>
+</div>
+<div class="row">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let actor of searchData" style=" margin-top: 5%; margin-bottom: 5%;">
+      <div class="card" >
+      
+        <img class="card-img-top"  [src]="makeMyUrlSafe(actor.aPhoto)" alt="movie photo" routerLink="/Actors/{{actor.id}}">
+        <div class="card-body">
+          <h6 class="card-title">{{actor.fName}} {{actor.lName}}</h6>
+          <p class="card-text">{{actor.bio}}</p>
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary" routerLink="/Actors/{{actor.id}}">Details</button>
+          </div>
+        </div>    
+      </div>
+    </div>
+</div>
+</div>
+
+<div *ngIf="singleDataFlag" class="mainDiv">
+
+  <div class="container" style="display:flex">
+    <button (click)="setActorData()" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateActorModal"> Update Actor </button>
+    <button (click)="deleteActor(singleActor.id)" *ngIf="amIModerator()" type="button" class="btn btn-primary"> Delete Actor </button>
+    <button class="btn btn-primary" *ngIf="amIGeneral()" (click)="favoriseActor(singleActor.id)"> Add Actor to Favorites</button>
+  </div>
+<table class="center-table">
+  
+    <tr>
+    <td><img [src]="makeMyUrlSafe(singleActor.aPhoto)" style="max-width: 500px; max-height: 600px;"></td>
+    </tr>
+    <tr>
+    <td> <p>{{singleActor.fName}} {{singleActor.lName}} </p></td>
+    </tr>
+    <tr>
+        <td><p> Date of birth:  {{gimmeDate(singleActor.doB).getDate()}}/{{gimmeDate(singleActor.doB).getMonth() + 1}}/{{gimmeDate(singleActor.doB).getFullYear()}}</p></td>
+
+    </tr>
+    <tr>
+        <td><p>Biography: {{singleActor.bio}}</p></td>
+    </tr>
+</table>
+
+<hr style="border-width: 10px;">
+
+<h6 *ngIf="awardList.length > 0" style="text-align: center;">  Awards</h6>
+<table class="center-table">
+    <tr *ngFor="let award of awardList">
+        <td>
+            <a routerLink="/Awards/{{award.id}}">{{award.name}}</a>
+        </td>
+    </tr>
+</table>
+
+<hr style="border-width: 10px;">
+
+<div *ngIf="singleActor.roles.length > 0">
+  <h6 style="text-align: center;">Movie Roles:</h6>
+  <div class="row">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let role of singleActor.roles" style=" margin-top: 5%; margin-bottom: 5%;">
+      <div class="card" >
+      
+        <img class="card-img-top"  [src]="makeMyUrlSafe(role.movie.photo)" alt="movie photo" routerLink="/Movies/{{role.movie.id}}">
+      <div class="card-body">
+        <h5 class="card-title" style="text-align: center;">{{role.movie.title}} </h5>
+        <p style="text-align: center;"></p>
+        <h6 class="card-title" style="text-align: center;">{{role.fName}} {{role.lName}}</h6>
+      
+   </div>    
+</div>
+</div>
+</div>
+
+ </div>
+
+
+</div>
+
+
+
+
+  <!-- ActorModal -->
+  <div class="modal fade" id="ActorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="actorForm">
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+        
+
+            <label for="fName">First Name: </label>
+            <input class="form-control" type="text" #fName formControlName="fName" ><br>
+            <label for="lName">Last Name: </label>
+            <input class="form-control" type="text" #lName  formControlName="lName"><br>
+            <label for="Bio">Actors Bio: </label>
+            <input class="form-control" type="text" #Bio  formControlName="bio"><br>
+            <label for="aPhoto">Actors Photo: </label>
+            <input class="form-control" type="file" #aPhoto  name="actorPhoto"  (change)="onChange($event)" required><br>
+            <label>  Actors Date of birth</label>
+            <input class="form-control" type="date" formControlName="doB">
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" [disabled]="actorForm.invalid"  (click)="addActor()" >Registration</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+
+
+
+
+    
+  <!-- ActorModal -->
+  <div class="modal fade" id="updatePhotoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please select the new actors photo.</p>
+  
+          <label for="aUPhoto">Actors Photo: </label>
+          <input class="form-control" type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateActorPhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+  
+
+    
+ 
+  <div class="modal fade" id="updateActorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateActor()">
+        <div class="modal-body">
+          <p>Please enter Actors credentials</p>
+  
+        
+
+            <label for="fName">First Name: </label>
+            <input class="form-control" type="text" #fName name="actorfName" [(ngModel)]="updateActorData.fName"><br>
+            <label for="lName">Last Name: </label>
+            <input class="form-control" type="text" #lName name="actorLName" [(ngModel)]="updateActorData.lName"><br>
+            <label for="Bio">Actors Bio: </label>
+            <input class="form-control" type="text" #Bio  name="actorBio" [(ngModel)]="updateActorData.bio"><br>
+            <label>  Actors Date of birth</label>
+            <input class="form-control" type="date" name="actorDoB" [(ngModel)]="updateActorData.date">
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" >Update Actor</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

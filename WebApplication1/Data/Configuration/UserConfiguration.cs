@@ -15,6 +15,7 @@ namespace WebApplication1.Data.Configuration
             builder.HasMany(x => x.FavProducers).WithMany(x => x.Favorites);
             builder.HasMany(x => x.Reviews).WithOne(x => x.Reviewer);
 
+            builder.HasOne(x => x.Admin).WithMany(x => x.CreatedModerators).HasForeignKey(x => x.AdminId).IsRequired(false);
            
 
 

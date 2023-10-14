@@ -1,0 +1,193 @@
+
+
+
+
+<div *ngIf="!singleDataFlag">
+ 
+  <div class="container" style="margin-bottom: 5%;" class="mainDiv">
+    <button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ProducerModal"> Add A Producer</button>
+    <div class="searchField">
+      <input style="width: 500px;" class="form-control" placeholder="Search Producers" name="searchField" [(ngModel)]="searchField">
+      <button class="btn btn-secondary" (click)="search()">Search Producers</button>
+    </div>
+ 
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let producer of searchData" style=" margin-top: 5%; margin-bottom: 5%;">
+        <div class="card" >
+        
+          <img class="card-img-top"  [src]="makeMyUrlSafe(producer.photo)" alt="movie photo" routerLink="/Producers/{{producer.id}}">
+          <div class="card-body">
+          <h6 class="card-title">{{producer.fName}} {{producer.lName}}</h6>
+          <p class="card-text">{{producer.bio}}</p>
+          <div class="card-footer">
+          <button type="button" class="btn btn-primary" routerLink="/Producers/{{producer.id}}">Details</button>
+        </div>
+        </div>    
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="singleDataFlag" class="mainDiv">
+  <div class="container" style="display: flex;">
+    <button (click)="setProducerData()" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateActorModal"> Update Producer </button>
+    <button (click)="setProducerId(singleProducer.id)" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updatePhotoModal"> Update photo </button> 
+    <button type="button" class="btn btn-primary"  *ngIf="amIGeneral()" (click)="favoriseProducer(singleProducer.id)"> Add Actor to Favorites</button>
+  </div>
+    <table class="center-table">
+    
+ 
+        <tr>
+        <td ><img [src]="makeMyUrlSafe(singleProducer.photo)"> </td>
+        
+        </tr>
+        <tr>
+          <td> <p>{{singleProducer.fName}} {{singleProducer.lName}} </p></td>
+        </tr>
+        <tr>
+            <td><p> Date of birth: {{gimmeDate(singleProducer.doB).getDate()}}/{{gimmeDate(singleProducer.doB).getMonth() + 1}}/{{gimmeDate(singleProducer.doB).getFullYear()}}</p></td>
+    
+        </tr>
+        <tr>
+            <td><p>Biography: {{singleProducer.bio}}</p></td>
+        </tr>
+    </table>
+
+    <hr style="border-width: 10px;">
+<div class="subDiv" *ngIf="awardList.length > 0">
+    <h6  style="text-align: center; padding-top: 1%;"> Awards </h6>
+    <table  class="center-table">
+        <tr *ngFor="let award of awardList">
+            <td><a routerLink="/Awards/{{award.id}}">{{award.name}}</a></td>
+        </tr>
+    </table>
+  </div>
+    <hr style="border-width: 10px;">
+
+    <div *ngIf="singleProducer.producings.length > 0" class="subDiv">
+        <h6 style="text-align: center; padding-top: 1%;">Movie producings:</h6>
+        <div class="row">
+          <div class="col-6 col-md-4 col-lg-3" *ngFor="let producing of singleProducer.producings" style=" margin-top: 5%; margin-bottom: 5%;">
+            <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+            
+              <img class="card-img-top"  [src]="makeMyUrlSafe(producing.movie.photo)" alt="movie photo" routerLink="/Movies/{{producing.movie.id}}">
+            <div class="card-body">
+              <h6 class="card-title">{{producing.movie.title}}</h6>
+              <p class="card-text">{{producing.movie.description}}</p>
+            <div class="card-footer">
+              <button type="button" class="btn btn-primary" routerLink="/Movies/{{producing.movie.id}}">Details</button>
+            </div>
+         </div>    
+      </div>
+    </div>
+    </div>
+    </div>
+   
+</div>
+
+
+
+  <!-- ActorModal -->
+  <div class="modal fade" id="ProducerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="producerForm">
+        <div class="modal-body">
+          <p>Please enter your producers data</p>
+  
+         
+
+            <label for="fName">First Name: </label>
+            <input class="form-control" type="text" #fName formControlName="fName" ><br>
+            <label for="lName">Last Name: </label>
+            <input class="form-control" type="text" #lName  formControlName="lName"><br>
+            <label for="Bio">Producer Bio: </label>
+            <input class="form-control" type="text" #Bio  formControlName="bio"><br>
+            <label for="aPhoto">Producer Photo: </label>
+            <input class="form-control" type="file" #aPhoto (change)="onChange($event)"><br>
+            <label>  Producers Date of birth</label>
+            <input class="form-control" type="date" formControlName="doB">
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit"  class="btn btn-primary" [disabled]="producerForm.invalid" (click)="addProducer()" >Registration</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+    
+    
+  <!-- ActorModal -->
+  <div class="modal fade" id="updatePhotoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please select the new Producers photo</p>
+  
+          <label for="aUPhoto">Producer Photo: </label>
+          <input class="form-control" type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateProducerPhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+    
+  <div class="modal fade" id="updateProducerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateProducer()">
+        <div class="modal-body">
+          <p>Please enter your updated Producer credentials</p>
+  
+        
+
+            <label for="fName">First Name: </label>
+            <input class="form-control" type="text" #fName name="ProducerfName" [(ngModel)]="updateProducerData.fName"><br>
+            <label for="lName">Last Name: </label>
+            <input class="form-control" type="text" #lName name="ProducerLName" [(ngModel)]="updateProducerData.lName"><br>
+            <label for="Bio">Producer Bio: </label>
+            <input class="form-control" type="text" #Bio  name="ProducerBio" [(ngModel)]="updateProducerData.bio"><br>
+            <label>  Producers Date of birth</label>
+            <input class="form-control" type="date" name="ProducerDoB" [(ngModel)]="updateProducerData.date">
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Registration</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

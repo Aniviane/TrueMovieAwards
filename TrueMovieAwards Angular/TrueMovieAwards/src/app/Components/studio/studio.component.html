@@ -1,0 +1,129 @@
+
+
+
+
+
+    
+<div class="container" style="margin-bottom: 5%; " *ngIf="!singleDataFlag" class="mainDiv">
+  <button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#StudioModal"> Add A Studio</button>
+
+  <div class="searchField"><input style="width: 500px;" class="form-control" placeholder="Search Studios" name="searchField" [(ngModel)]="searchField"> <button class="btn btn-secondary" (click)="search()">Search Studios</button></div>
+ 
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-4" *ngFor="let studio of searchData" style=" margin-top: 5%; margin-bottom: 5%; max-width: 240px; max-height: 400px;">
+      <div class="card border-info"  style="border-style: solid; border-width: 3px;">
+      
+        <img class="card-img-top"  [src]="makeMyUrlSafe(studio.photo)" alt="movie photo" routerLink="/Studios/{{studio.id}}">
+      <div class="card-body">
+        <h6 class="card-title">{{studio.name}}</h6>
+        <p class="card-text">{{studio.description}}</p>
+      <div class="card-footer">
+        <button type="button" class="btn btn-primary" routerLink="/Studios/{{studio.id}}">Details</button>
+      </div>
+   </div>    
+</div>
+</div>
+</div>
+</div>
+    <div *ngIf="singleDataFlag" class="mainDiv">
+    
+        <table class="center-table">
+            <tr><td>
+                <img [src]="makeMyUrlSafe(singleStudio.photo)"> <br> <button (click)="setStudioId(singleStudio.id)" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal"> Update photo </button>
+            </td></tr>
+            <tr>
+                <td><h4>{{singleStudio.name}}</h4></td>
+            </tr>
+            <tr>
+                <td><p>{{singleStudio.description}}</p></td>
+            </tr>
+        </table>
+    
+
+        <div class="container" >
+    
+          <div class="row">
+            <div class="col-6 col-md-4 col-lg-3" *ngFor="let movie of singleStudio.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+              <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+              
+                <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+              <div class="card-body">
+                <h6 class="card-title">{{movie.title}}</h6>
+                <p class="card-text">{{movie.description}}</p>
+              <div class="card-footer">
+                <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+              </div>
+           </div>    
+        </div>
+      </div>
+      </div>
+      </div>
+    
+    </div>
+
+
+
+     <!-- ActorModal -->
+  <div class="modal fade" id="StudioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        <div class="modal-body">
+          <p>Please enter your producers data</p>
+  
+         
+
+            <label for="fName">Studio Name: </label>
+            <input class="form-control" type="text" #fName  [(ngModel)]="studioToAdd.name" name="studioName" required><br>
+            <label for="lName">Studio Description : </label>
+            <input class="form-control" type="text" #lName [(ngModel)]="studioToAdd.description" name="studioDescription" required><br>
+            
+            <label for="aPhoto">Studio Photo: </label>
+            <input class="form-control" type="file" #aPhoto (change)="onPhotoChange($event)" required><br>
+          
+            
+          
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Studio</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+     
+  <!-- ActorModal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+          <label for="aUPhoto">Studio Photo: </label>
+          <input type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateStudioPhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

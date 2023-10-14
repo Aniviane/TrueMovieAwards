@@ -30,6 +30,7 @@ namespace WebApplication1.Controllers
         public UserDTO Get(int id)
         {
             return UserService.GetUser(id);
+            
         }
 
         [HttpPost("Login")]
@@ -41,7 +42,7 @@ namespace WebApplication1.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public UserDTO Post(UserDTO User)
+        public UserDTO Post([FromForm] UserCreateDTO User)
         {
             return UserService.Register(User);
         }
@@ -68,7 +69,8 @@ namespace WebApplication1.Controllers
             UserService.UpdateNotify(id);
         }
 
-        [HttpPost("LeaveReview")]
+        [HttpPost("Review")]
+        [Authorize]
         public UpReviewDTO LeaveReview(UpReviewDTO upReviewDTO)
         {
             return UserService.LeaveReview(upReviewDTO);
@@ -81,6 +83,39 @@ namespace WebApplication1.Controllers
             
              UserService.FavSomething(favoriseDTO);
             
+        }
+
+        [HttpPut("UpdatePhoto")]
+        public void updatePhoto([FromForm] PhotoUpdateDTO dto)
+        {
+            UserService.UpdatePhoto(dto);
+        }
+
+
+        [HttpPut("Watchlist")]
+        [Authorize]
+        public WatchListDTO AddMovieToWatchList(long movieId)
+        {
+            return UserService.AddToWatchlist(movieId);
+        }
+
+        [HttpPut("Review")]
+        public UpReviewDTO updateReview(UpReviewDTO dto)
+        {
+            return UserService.UpdateReview(dto);
+        }
+
+        [HttpDelete("Review")]
+        public void deleteReview(long id)
+        {
+            UserService.DeleteReview(id);
+        }
+
+        [HttpPost("Moderator")]
+        [Authorize(Roles = "Admin")]
+        public UserDTO RegisterModerator(UserLoginDTO dto)
+        {
+            return UserService.RegisterModerator(dto);
         }
     }
 }

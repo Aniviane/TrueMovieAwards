@@ -1,0 +1,280 @@
+
+
+<div class="container" style="margin-bottom: 5%;" *ngIf="!singleDataFlag" class="mainDiv">
+  <div><input name="searchField" [(ngModel)]="searchField"> <button (click)="search()">Search Users</button></div>
+  <div class="row">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let user of searchData; index as i" style=" margin-top: 5%; margin-bottom: 5%;" >
+      <div class="card" >
+      
+        <img class="card-img-top"  [src]="makeMyUrlSafe(user.uPhoto)" alt="movie photo" routerLink="/Users/{{user.id}}">
+      <div class="card-body">
+        <h6 class="card-title">{{user.username}}</h6>
+        <p class="card-text">{{user.bio}}</p>
+      <div class="card-footer">
+        <button type="button" class="btn btn-primary" routerLink="/Users/{{user.id}}">Details</button>
+       <button type="button" class="btn btn-primary" (click)="removeUser(user.id, i)" *ngIf="amIAdmin() && user.uType != 'Admin'" style="justify-self: right; align-self: right;">Remove User</button>
+      </div>
+   </div>    
+</div>
+</div>
+</div>
+</div>
+
+<div *ngIf="singleDataFlag" class="mainDiv">
+
+  <div class="container" style="display: flex" class="subDiv" *ngIf="amIGeneral() && amILoggedIn(UserToDisplay.id)"  >
+    <button (click)="setUserId(UserToDisplay.id)" *ngIf="amIGeneral() && amILoggedIn(UserToDisplay.id)" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal"> Update photo </button>
+ 
+    <button (click)="setUserData()" *ngIf="amIGeneral() && amILoggedIn(UserToDisplay.id)"  type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal"> Update Profile Data </button>
+  </div>
+    <table class="center-table" style="padding-top: 3%;">
+        <tr >
+            <td > <img [src]="makeMyUrlSafe(UserToDisplay.uPhoto)"> </td>
+            
+            
+            
+        </tr>
+        <tr>
+          <td ><p>{{UserToDisplay.username}}</p></td>
+        </tr>
+        <tr>
+            <td><p>{{UserToDisplay.fName}} {{UserToDisplay.lName}}</p></td>
+        </tr>
+        <tr>
+            <td > {{UserToDisplay.bio}}</td>
+        </tr>
+    </table>
+
+  
+
+    <div class="subDiv" *ngIf="loggedInFlag">
+
+
+    <table  class="center-table">
+   <hr style="border-width: 10px;">
+    <tr  *ngFor="let notification of UserToDisplay.notifies" >
+        <td *ngIf="!notification.seen">
+            <a routerLink="/Awards/{{notification.awardId}}" (click)="updateNotify(notification.notificationId)"> {{notification.description}}</a>
+        </td>
+    </tr>
+    </table>
+  </div>
+
+  <hr style="border-width: 10px;">
+    
+  <div  *ngIf="UserToDisplay.favActors.length > 0" class="subDiv">
+    <h6> Favorite Actors</h6>
+   
+
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let actor of UserToDisplay.favActors" style=" margin-top: 5%; margin-bottom: 5%;">
+        <div class="card" >
+        
+          <img class="card-img-top"  [src]="makeMyUrlSafe(actor.photo)" alt="movie photo" routerLink="/Actors/{{actor.id}}">
+          <div class="card-body">
+            <h6 class="card-title">{{actor.fname}} {{actor.lname}}</h6>
+            
+            <div class="card-footer">
+              <button type="button" class="btn btn-primary" routerLink="/Actors/{{actor.id}}">Details</button>
+            </div>
+          </div>    
+        </div>
+      </div>
+  </div>
+  </div>
+
+  <hr style="border-width: 10px;">
+
+  <div *ngIf="UserToDisplay.favProducers.length > 0" class="subDiv">
+    
+    <h6 > Favorite Producers</h6>
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let producer of UserToDisplay.favProducers" style=" margin-top: 5%; margin-bottom: 5%;">
+        <div class="card" >
+        
+          <img class="card-img-top"  [src]="makeMyUrlSafe(producer.photo)" alt="movie photo" routerLink="/Producers/{{producer.id}}">
+          <div class="card-body">
+          <h6 class="card-title">{{producer.fName}} {{producer.lName}}</h6>
+          <div class="card-footer">
+          <button type="button" class="btn btn-primary" routerLink="/Producers/{{producer.id}}">Details</button>
+        </div>
+        </div>    
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr style="border-width: 10px;">
+
+ <div *ngIf="UserToDisplay.favMovies.length > 0" class="subDiv">
+    <h6>  Favorite Movies</h6>
+    
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let movie of UserToDisplay.favMovies" style=" margin-top: 5%; margin-bottom: 5%;">
+          <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+          
+            <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+          <div class="card-body">
+            <h6 class="card-title">{{movie.title}}</h6>
+            <p class="card-text">{{movie.description}}</p>
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+          </div>
+      </div>    
+        </div>
+      </div>
+  </div>
+</div>
+
+<hr style="border-width: 10px;">
+
+    <div *ngIf="UserToDisplay.reviews.length > 0" class="subDiv">
+        <h6 > My Reviews </h6>
+        
+
+        <div class="row">
+          <div class="col-12 col-md-6 col-lg-5" *ngFor="let rev of UserToDisplay.reviews; index as i" style=" margin-top: 5%; margin-bottom: 5%;">
+              <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+              
+                <img class="card-img-top"  [src]="makeMyUrlSafe(rev.movie.photo)" alt="movie photo" routerLink="/Movies/{{rev.movie.id}}">
+              <div class="card-body">
+                <h6 class="card-title">{{rev.grade}} / 5</h6>
+                <p class="card-text">{{rev.description}}</p>
+              <div class="card-footer" style="display:inline-flex ;">
+                <button type="button" class="btn btn-primary" routerLink="/Movies/{{rev.movie.id}}">Movie Details</button>
+                <button class="btn btn-primary" *ngIf="amILoggedIn(UserToDisplay.id)" (click)="setReviewData(i)" data-toggle="modal" data-target="#updateReviewModal">Update Review</button>
+                <button class="btn btn-primary" *ngIf="amILoggedIn(UserToDisplay.id)" (click)="deleteReview(rev.id)">Delete Review</button>
+              </div>
+          </div>    
+            </div>
+          </div>
+      </div>
+
+
+    </div>
+    
+    <hr style="border-width: 10px;">
+    
+    <div *ngIf="UserToDisplay.watchList.movies.length > 0" class="subDiv">
+    <h6>Watchlist</h6>
+    <div class="row">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let movie of UserToDisplay.watchList.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+          <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+          
+            <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+          <div class="card-body">
+            <h6 class="card-title">{{movie.title}}</h6>
+            <p class="card-text">{{movie.description}}</p>
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+          </div>
+      </div>    
+        </div>
+      </div>
+  </div>
+  </div>
+
+
+</div>
+
+
+
+    
+  <!-- ActorModal -->
+  <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+          <label for="aUPhoto">Users Photo: </label>
+          <input type="file" #aUPhoto  name="actorUpdatePhoto"  (change)="onUpdateChange($event)" required><br>
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"  (click)="updateUserPhoto()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+    
+  <div class="modal fade" id="updateUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+        
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateUser()">
+        <div class="modal-body">
+          <p>Please enter your Updated Data</p>
+  
+        
+
+            <label for="fName">Username: </label>
+            <input class="form-control" type="text" name="username" [(ngModel)]="updateUserData.username"><br>
+            <label for="lName">New Password </label>
+            <input class="form-control" type="text" name="pass" [(ngModel)]="updateUserData.newPassword"><br>
+            <label for="fName">Email: </label>
+            <input class="form-control" type="text" name="email" [(ngModel)]="updateUserData.eMail"><br>
+            <label for="fName">First Name: </label>
+            <input class="form-control" type="text" name="fname" [(ngModel)]="updateUserData.fName"><br>
+            <label for="fName">Last Name: </label>
+            <input class="form-control" type="text" name="lname" [(ngModel)]="updateUserData.lName"><br>
+            <label for="fName">Bio </label>
+            <input class="form-control" type="text" name="bio" [(ngModel)]="updateUserData.bio"><br>
+            
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" >Update Profile</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+
+
+
+     
+  <!-- ActorModal -->
+  <div class="modal fade" id="updateReviewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form >
+        <div class="modal-body">
+          <p>Please enter your Review details</p>
+  
+          <label for="aUPhoto">Review Grade: </label>
+          <input class="form-control" type="number" [(ngModel)]="updateReviewData.grade" name="revGrade"> <br>
+          <label> Review Description:</label>
+          <input class="form-control" type="text" [(ngModel)]="updateReviewData.description" name="revDesc">
+
+         <p style="color: limegreen;" *ngIf="showUpdateText"> Review Updated!</p>
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" (click)="updateReview()" >UpdatePhoto</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>

@@ -1,0 +1,154 @@
+
+
+
+<div *ngIf="!singleDataFlag" class="mainDiv" style="padding-top: 5%;">
+  <button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#GenresModal"> Add A Genre</button>
+
+  <div class="searchField"><input style="width: 500px;" class="form-control" placeholder="Search Genres" name="searchField" [(ngModel)]="searchField"> <button class="btn btn-secondary" (click)="search()">Search Genres</button></div>
+ 
+  <table *ngFor="let genre of searchData" class="center-table"  >
+      <tr >
+          <td><a routerLink="/Genres/{{genre.id}}"><h4>{{genre.fName}} </h4></a></td>
+          </tr>
+          <tr>
+          <td><ul>
+              <li *ngFor="let movie of genre.movies">
+                  <a routerLink="/Movies/{{movie.id}}">{{movie.title}}</a>
+              </li>
+          </ul></td>
+      </tr>
+  </table>
+  <hr style="border-width: 10px;">
+  </div>
+
+
+  <div *ngIf="singleDataFlag" class="mainDiv">
+    <button (click)="setGenreName()" *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateGenreModal"> Update Genre Name </button>
+  
+    <h3 style="text-align: center;"> {{singleGenre.fName}}</h3>  
+
+    <div class="container" >
+    
+      <div class="row">
+        <div class="col-6 col-md-4 col-lg-3" *ngFor="let movie of singleGenre.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+          <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+          
+            <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+          <div class="card-body">
+            <h6 class="card-title">{{movie.title}}</h6>
+            <p class="card-text">{{movie.description}}</p>
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+          </div>
+       </div>    
+    </div>
+  </div>
+  </div>
+  </div>
+
+    <button *ngIf="amIModerator()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMovieModal" (click)="setMovieId()"> Add Movie to Genre</button>
+</div>
+
+
+
+
+
+     <!-- ActorModal -->
+     <div class="modal fade" id="GenreModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form (ngSubmit)="onSubmit()" [formGroup]="genreForm">
+            <div class="modal-body">
+              <p>Please enter your Genre name</p>
+      
+             
+    
+                <label for="fName">Genre Name: </label>
+                <input class="form-control" type="text" #fName  formControlName="name" name="genreName" required><br>
+                
+              
+                
+              
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" [disabled]="genreForm.invalid">Add Genre</button>
+            </div>
+          </form>
+          </div>
+        </div>
+        </div>
+
+
+        
+  <div class="modal fade" id="addMovieModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="addMovieToGenre()">
+        <div class="modal-bateSeriesody">
+          <p>Please enter your Genre name</p>
+  
+          <label for="aUPhoto">Select Movie : </label>
+          <select class="form-control" [(ngModel)]="addMovieData.movieId" name="movie">
+            <option *ngFor="let movie of Movies"  [value]="movie.id">
+                {{movie.title}}
+            </option>
+          </select>
+         
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Movie To Genre</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+    
+
+
+
+    
+
+     <!-- ActorModal -->
+     <div class="modal fade" id="updateGenreModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form >
+            <div class="modal-body">
+              <p>Please enter your Genre name</p>
+      
+             
+    
+                <label for="fName">Genre Name: </label>
+                <input class="form-control" type="text" #fName  [(ngModel)]="updateGenreName" name="genreName" required><br>
+                
+              
+                
+              
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary"  (click)="updateGenre()">Add Genre</button>
+            </div>
+          </form>
+          </div>
+        </div>
+        </div>

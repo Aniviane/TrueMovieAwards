@@ -1,0 +1,42 @@
+.center-table {
+    text-align: center;
+    justify-content: center;
+    justify-self: center;
+    margin: auto;
+    margin-top: 5%;
+    display: ruby;
+}
+
+.center-table td  {
+    max-width: 70;
+    max-height: 80;
+}
+
+.searchField {
+    justify-content: center;
+    align-content: center;
+    display: flex;
+}
+
+.center-div {
+   
+    justify-content: center;
+}
+.mainDiv {
+    background-color:khaki;
+  justify-content: center;
+}
+
+.thumbnail {
+    width : 50px;
+    height : 50px;
+    margin-right: 5px;
+    border-radius: 75%;
+}
+
+.subDiv {
+    margin-left: 4%;
+    margin-right: 4%;
+    background-color:rgb(240, 233, 169);
+    justify-content: center;
+}

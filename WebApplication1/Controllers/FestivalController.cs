@@ -33,7 +33,7 @@ namespace WebApplication1.Controllers
 
         // POST api/<FestivalController>
         [HttpPost]
-        public FestivalDTO Post(FestivalDTO Festival)
+        public FestivalDTO Post([FromForm] FestivalCreateDTO Festival)
         {
             return FestivalService.AddFestival(Festival);
         }
@@ -50,6 +50,12 @@ namespace WebApplication1.Controllers
         public void Delete(int id)
         {
             FestivalService.DeleteFestival(id);
+        }
+
+        [HttpPut("UpdatePhoto")]
+        public void updatePhoto([FromForm] PhotoUpdateDTO dto)
+        {
+            FestivalService.UpdatePhoto(dto);
         }
     }
 }

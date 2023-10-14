@@ -34,7 +34,7 @@ namespace WebApplication1.Data.DTO
             Username = user.Username;
             FName = user.FName;
             LName = user.LName;
-            Password = "";
+            Password = user.Password;
             Token = "";
             EMail = user.EMail;
             UType = user.UType;

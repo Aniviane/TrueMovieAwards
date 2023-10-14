@@ -10,21 +10,133 @@ namespace WebApplication1.Controllers.Services
 
         private DataContext context;
 
+        private string serverPath = "https://localhost:7133";
         public ProducerService(DataContext dataContext)
         {
             context = dataContext;
         }
-        public ProducerDTO AddProducer(ProducerDTO Producer)
+        public ProducerDTO AddProducer(ProducerCreateDTO Producer)
         {
-            var a = new Producer(Producer);
-
-            context.Producers.Add(a);
-
-            context.SaveChanges();
-
-            return new ProducerDTO(a);
+            if (Producer != null && Producer.Photo != null && Producer.Photo.Length > 0)
+            {
 
 
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Producers", folderName);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(Producer.Photo.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    Producer.Photo.CopyToAsync(stream);
+                }
+
+
+                var pr = new Producer(Producer);
+
+                pr.Photo = serverPath + "/Pictures/Producers/" + folderName + "/" + imageName;
+
+
+                context.Producers.Add(pr);
+
+                context.SaveChanges();
+
+                return new ProducerDTO(pr);
+
+            }
+            return null;
+        }
+
+
+        public void UpdatePhoto(PhotoUpdateDTO photoUpdateDTO)
+        {
+            long id = long.Parse(photoUpdateDTO.ID);
+
+            var producer = context.Producers.Find(id);
+
+            if (producer == null) return;
+            if (producer.Photo != "")
+            {
+
+                var photoPath = producer.Photo;
+
+                var relativePath = photoPath.Replace(serverPath, "");
+
+                var absolutePath = Directory.GetCurrentDirectory() + relativePath;
+
+                absolutePath = absolutePath.Replace("/", "\\");
+
+                if (photoUpdateDTO.Photo != null && photoUpdateDTO.Photo.Length > 0)
+                {
+                    if (File.Exists(absolutePath))
+                        File.Delete(absolutePath);
+
+                    var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Producers", folderName);
+
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                    var imageName = "image" + imageExtension;
+
+                    var imagePath = Path.Combine(folderPath, imageName);
+
+
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+
+                        photoUpdateDTO.Photo.CopyTo(stream);
+                    }
+
+
+                    producer.Photo = serverPath + "/Pictures/Producers/" + folderName + "/" + imageName;
+
+                    context.SaveChanges();
+                }
+
+
+            }
+            else
+            {
+
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Producers", folderName);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    photoUpdateDTO.Photo.CopyTo(stream);
+                }
+
+
+
+
+                producer.Photo = serverPath + "/Pictures/Producers/" + folderName + "/" + imageName;
+
+                context.SaveChanges();
+
+            }
         }
 
         public void DeleteProducer(long id)
@@ -68,10 +180,8 @@ namespace WebApplication1.Controllers.Services
                 ac.FName = Producer.FName;
                 ac.LName = Producer.LName;
                 ac.Bio = Producer.Bio;
-                ac.Photo = Producer.Photo;
                 
 
-                context.Entry(ac).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
                 context.SaveChanges();
 

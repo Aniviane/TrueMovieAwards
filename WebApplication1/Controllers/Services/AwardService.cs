@@ -190,15 +190,23 @@ namespace WebApplication1.Controllers.Services
                 not.Description = "Your favorite Movie got an award!";
                 var help = ((MovieAward)award).Movies;
                 foreach (var m in help) {
+                    List<User> users = new List<User>();
                         foreach(var user in m.Favorites)
                             {
-                            var n = new Notify();
-                            n.User = user;
-                            n.Seen = false;
-                            n.UserId = user.ID;
-
-                            not.Notifies.Add(n);
+                                if (!users.Contains(user))
+                                 users.Add(user);
                             }
+
+                        foreach(var user in users)
+                        {
+                        var notify = new Notify();
+                        notify.User = user;
+                        notify.UserId = user.ID;
+                        notify.Seen = false;
+
+                        not.Notifies.Add(notify);
+                        }
+
                         }
 
                 context.Notifications.Add(not);
@@ -212,14 +220,21 @@ namespace WebApplication1.Controllers.Services
                 var help = ((ProducerAward)award).Producings;
                 foreach (var m in help)
                 {
+                    List<User> users = new List<User>();
                     foreach (var user in m.Producer.Favorites)
                     {
-                        var n = new Notify();
-                        n.User = user;
-                        n.Seen = false;
-                        n.UserId = user.ID;
+                        if (!users.Contains(user))
+                            users.Add(user);
+                    }
 
-                        not.Notifies.Add(n);
+                    foreach (var user in users)
+                    {
+                        var notify = new Notify();
+                        notify.User = user;
+                        notify.UserId = user.ID;
+                        notify.Seen = false;
+
+                        not.Notifies.Add(notify);
                     }
                 }
 
@@ -235,14 +250,21 @@ namespace WebApplication1.Controllers.Services
                 var help = ((RoleAward)award).Roles;
                 foreach (var m in help)
                 {
+                    List<User> users = new List<User>();
                     foreach (var user in m.Actor.Favorites)
                     {
-                        var n = new Notify();
-                        n.User = user;
-                        n.Seen = false;
-                        n.UserId = user.ID;
+                        if (!users.Contains(user))
+                            users.Add(user);
+                    }
 
-                        not.Notifies.Add(n);
+                    foreach (var user in users)
+                    {
+                        var notify = new Notify();
+                        notify.User = user;
+                        notify.UserId = user.ID;
+                        notify.Seen = false;
+
+                        not.Notifies.Add(notify);
                     }
                 }
 

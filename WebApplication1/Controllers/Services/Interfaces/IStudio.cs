@@ -11,6 +11,8 @@ namespace WebApplication1.Controllers.Services.Interfaces
 
         public StudioDTO GetStudio(long id);
 
+        public void UpdatePhoto(PhotoUpdateDTO photoUpdateDTO);
+
         public StudioDTO UpdateStudio(StudioDTO studio);
 
         public void DeleteStudio(long id);

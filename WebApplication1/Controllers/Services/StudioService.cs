@@ -24,7 +24,7 @@ namespace WebApplication1.Controllers.Services
             {
                 var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "../../Pictures/Studios", folderName);
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures","Studios", folderName);
 
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
@@ -37,15 +37,19 @@ namespace WebApplication1.Controllers.Services
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
-                     Studio.photo.CopyToAsync(stream);
+                     Studio.photo.CopyTo(stream);
                 }
 
                 var st = new Studio();
                 st.Name = Studio.name;
                 st.Description = Studio.description;
-                st.Photo = serverPath + "/Pictures/Studios/" + folderName + imageName;
+                st.Photo = serverPath + "/Pictures/Studios/" + folderName +"/"+ imageName;
 
                 st.Movies = new List<Movie>();
+
+                Console.WriteLine("Studio created with Path " + st.Photo);
+
+
                 context.Studios.Add(st);
 
                 context.SaveChanges();
@@ -60,6 +64,90 @@ namespace WebApplication1.Controllers.Services
 
         }
 
+        public void UpdatePhoto(PhotoUpdateDTO photoUpdateDTO)
+        {
+            long id = long.Parse(photoUpdateDTO.ID);
+
+            var studio = context.Studios.Find(id);
+
+            if (studio == null) return;
+            if (studio.Photo != "")
+            {
+
+                var photoPath = studio.Photo;
+
+                var relativePath = photoPath.Replace(serverPath, "");
+
+                var absolutePath = Directory.GetCurrentDirectory() + relativePath;
+
+                absolutePath = absolutePath.Replace("/", "\\");
+
+                if (photoUpdateDTO.Photo != null && photoUpdateDTO.Photo.Length > 0)
+                {
+                    if (File.Exists(absolutePath))
+                        File.Delete(absolutePath);
+
+                  
+
+                    var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Studios", folderName);
+
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                    var imageName = "image" + imageExtension;
+
+                    var imagePath = Path.Combine(folderPath, imageName);
+
+
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+
+                        photoUpdateDTO.Photo.CopyTo(stream);
+                    }
+
+
+                    studio.Photo = serverPath + "/Pictures/Studios/" + folderName + "/" + imageName;
+
+                    context.SaveChanges();
+                }
+
+
+            }
+            else
+            {
+
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Studios", folderName);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    photoUpdateDTO.Photo.CopyTo(stream);
+                }
+
+
+
+
+                studio.Photo = serverPath + "/Pictures/Studios/" + folderName + "/" + imageName;
+
+                context.SaveChanges();
+
+            }
+        }
 
 
 
@@ -126,7 +214,6 @@ namespace WebApplication1.Controllers.Services
 
                 Studio.Name = studio.Name;
                 Studio.Description = studio.Description;
-                Studio.Photo = studio.Photo;
                 
 
 

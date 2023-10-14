@@ -65,5 +65,31 @@ namespace WebApplication1.Data.Models
 
         }
 
+
+
+        public Movie(MovieCreateDTO movieDTO)
+        {
+            Description = movieDTO.Description;
+            Title = movieDTO.Title;
+            DateOfRelease = DateTime.Parse(movieDTO.DateOfRelease);
+            Photo = "";
+
+            RevCount = 0;
+            RevGrade = 0;
+
+            Genres = new List<Genre>();
+
+            Roles = new List<Role>();
+
+            Producings = new List<ProducingMovie>();
+
+            WatchLists = new List<WatchList>();
+
+            Favorites = new List<User>();
+
+            MovieAwards = new List<MovieAward>();
+
+        }
+
     }
 }

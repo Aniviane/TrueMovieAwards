@@ -525,6 +525,9 @@ namespace WebApplication1.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"), 1L, 1);
 
+                    b.Property<long?>("AdminId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Bio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -558,6 +561,8 @@ namespace WebApplication1.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("AdminId");
 
                     b.ToTable("Users");
                 });
@@ -846,6 +851,15 @@ namespace WebApplication1.Migrations
                     b.Navigation("Movie");
                 });
 
+            modelBuilder.Entity("WebApplication1.Data.Models.User", b =>
+                {
+                    b.HasOne("WebApplication1.Data.Models.User", "Admin")
+                        .WithMany("CreatedModerators")
+                        .HasForeignKey("AdminId");
+
+                    b.Navigation("Admin");
+                });
+
             modelBuilder.Entity("WebApplication1.Data.Models.WatchList", b =>
                 {
                     b.HasOne("WebApplication1.Data.Models.User", "User")
@@ -909,6 +923,8 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Data.Models.User", b =>
                 {
+                    b.Navigation("CreatedModerators");
+
                     b.Navigation("Notifies");
 
                     b.Navigation("Reviews");

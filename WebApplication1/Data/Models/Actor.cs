@@ -30,5 +30,17 @@ namespace WebApplication1.Data.Models
             Roles = new List<Role>();
             Favorites = new List<User>();
         }
+
+
+        public Actor(ActorCreateDTO dto)
+        {
+            Bio = dto.Bio;
+            DoB = DateTime.Parse(dto.DoB);
+            LName = dto.LName;
+            FName = dto.FName;
+            Roles = new List<Role>();
+            Favorites = new List<User>();
+            APhoto = "";
+        }
     }
 }

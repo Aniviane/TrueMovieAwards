@@ -21,5 +21,14 @@ namespace WebApplication1.Data.Models
             Photo = festivalDTO.Photo;
             Holdings = new List<Holding>(); 
         }
+
+        public Festival(FestivalCreateDTO dto)
+        {
+            Name = dto.Name;
+            Description = dto.Description;
+            Holdings = new List<Holding>();
+            Photo = "";
+
+        }
     }
 }

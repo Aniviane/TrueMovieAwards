@@ -7,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Castle.Core.Internal;
+using BCrypt.Net;
 
 namespace WebApplication1.Controllers.Services
 {
@@ -18,6 +20,8 @@ namespace WebApplication1.Controllers.Services
 
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private string serverPath = "https://localhost:7133";
+
         public UserService(DataContext dataContext, IHttpContextAccessor httpContextAccessor)
         {
             context = dataContext;
@@ -27,7 +31,7 @@ namespace WebApplication1.Controllers.Services
         public void DeleteUser(long id)
         {
             var user = context.Users.Find(id);
-            if(user != null)
+            if (user != null)
             {
                 context.Users.Remove(user);
                 context.SaveChanges();
@@ -37,12 +41,12 @@ namespace WebApplication1.Controllers.Services
         public void FavSomething(FavoriseDTO favoriseDTO)
         {
             // long userId = 3; //temp untill JWT is implemented
-           
+
             if (_httpContextAccessor == null) return;
             long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
             var user = context.Users.Find(userId);
             if (user == null) return;
-            if(favoriseDTO.Mode == "Movie") {
+            if (favoriseDTO.Mode == "Movie") {
 
                 var movie = context.Movies.Find(favoriseDTO.ID);
                 if (movie == null) return;
@@ -53,9 +57,9 @@ namespace WebApplication1.Controllers.Services
 
                 context.SaveChanges();
                 return;
-            
+
             }
-            if(favoriseDTO.Mode == "Producer") {
+            if (favoriseDTO.Mode == "Producer") {
 
                 var producer = context.Producers.Find(favoriseDTO.ID);
                 if (producer == null) return;
@@ -68,7 +72,7 @@ namespace WebApplication1.Controllers.Services
                 context.SaveChanges();
                 return;
             }
-            if(favoriseDTO.Mode == "Actor") {
+            if (favoriseDTO.Mode == "Actor") {
 
                 var actor = context.Actors.Find(favoriseDTO.ID);
                 if (actor == null) return;
@@ -127,15 +131,16 @@ namespace WebApplication1.Controllers.Services
 
         public UserDTO Login(UserLoginDTO userDTO)
         {
-            var rets = context.Users.Where(o => o.Username == userDTO.Username);
-            if (rets == null) return null;
-
-            var ret = rets.First();
-            if (ret == null)
-                return null;
-            if (ret.Username != userDTO.Username || ret.Password != userDTO.Password) return null;
+            var ret = context.Users.Where(o => o.Username == userDTO.Username).FirstOrDefault();
+            if (ret == null) return null;
 
             
+
+            
+
+            if (!BCrypt.Net.BCrypt.Verify(userDTO.Password,ret.Password)) return null;
+
+
 
 
             List<Claim> claims = new List<Claim>();
@@ -160,54 +165,210 @@ namespace WebApplication1.Controllers.Services
 
 
 
-            
+
 
         }
 
-        public UserDTO Register(UserDTO user)
+        public UserDTO Register(UserCreateDTO user)
         {
-            var userTemp = new User(user);
-
-            context.Users.Add(userTemp);
-
-            context.SaveChanges();
-
-            var ret = new UserDTO(userTemp);
-
-            List<Claim> claims = new List<Claim>();
-
-            claims.Add(new Claim(ClaimTypes.Role, ret.UType));
-            claims.Add(new Claim(ClaimTypes.SerialNumber, ret.ID.ToString()));
-            SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TrueMovieAwardsTrueMovieAwardsTrueMovieAwardsTrueMovieAwards"));
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-            var tokenOptions = new JwtSecurityToken(
-                issuer: "https://localhost:7133/",
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: signinCredentials
-                ); ;
-            string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
-
             
-            ret.Token = token;
+         
+            if (user != null && user.UPhoto != null && user.UPhoto.Length > 0)
+            {
+
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Users", folderName);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(user.UPhoto.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    user.UPhoto.CopyTo(stream);
+                }
+
+
+
+
+                var u = new User(user);
+                u.UPhoto = serverPath + "/Pictures/Users/" + folderName + "/" + imageName;
+                var passHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                u.Password = passHash;
+
+                context.Users.Add(u);
+
+                context.SaveChanges();
+
+
+
+                var ret = new UserDTO(u);
+
+                List<Claim> claims = new List<Claim>();
+
+                claims.Add(new Claim(ClaimTypes.Role, ret.UType));
+                claims.Add(new Claim(ClaimTypes.SerialNumber, ret.ID.ToString()));
+                SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TrueMovieAwardsTrueMovieAwardsTrueMovieAwardsTrueMovieAwards"));
+                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var tokenOptions = new JwtSecurityToken(
+                    issuer: "https://localhost:7133/",
+                    claims: claims,
+                    expires: DateTime.Now.AddHours(1),
+                    signingCredentials: signinCredentials
+                    ); ;
+                string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+
+
+                ret.Token = token;
 
 
 
 
 
 
-            return  ret;
+                return ret;
+
+
+            }
+
+
+            return null;
+
+
+
+
 
 
         }
+
+        public UserDTO RegisterModerator(UserLoginDTO dto)
+        {
+            var user = new User();
+
+            user.Username = dto.Username;
+            user.Password = dto.Password.GetHashCode().ToString();
+            user.FName = "";
+            user.LName = "";
+            user.EMail = "";
+            user.UType = "Moderator";
+            user.Bio = "";
+            user.UPhoto = "";
+
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null) return null;
+            long adminId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+
+            var admin = context.Users.Find(adminId);
+
+            user.Admin = admin;
+
+            context.Users.Add(user);
+            context.SaveChanges();
+            return new UserDTO(user);
+        }
+        public void UpdatePhoto(PhotoUpdateDTO photoUpdateDTO)
+        {
+            long id = long.Parse(photoUpdateDTO.ID);
+
+            var user = context.Users.Find(id);
+
+            if (user == null) return;
+            if (user.UPhoto != "")
+            {
+
+                var photoPath = user.UPhoto;
+
+                var relativePath = photoPath.Replace(serverPath, "");
+
+                var absolutePath = Directory.GetCurrentDirectory() + relativePath;
+
+                absolutePath = absolutePath.Replace("/", "\\");
+
+                if (photoUpdateDTO.Photo != null && photoUpdateDTO.Photo.Length > 0)
+                {
+                    if (File.Exists(absolutePath))
+                        File.Delete(absolutePath);
+
+
+                    var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Users", folderName);
+
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                    var imageName = "image" + imageExtension;
+
+                    var imagePath = Path.Combine(folderPath, imageName);
+
+
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+
+                        photoUpdateDTO.Photo.CopyTo(stream);
+                    }
+
+
+                    user.UPhoto = serverPath + "/Pictures/Users/" + folderName + "/" + imageName;
+
+                    context.SaveChanges();
+
+                }
+
+
+            }
+            else
+            {
+
+                var folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Pictures", "Users", folderName);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                var imageExtension = Path.GetExtension(photoUpdateDTO.Photo.FileName);
+
+                var imageName = "image" + imageExtension;
+
+                var imagePath = Path.Combine(folderPath, imageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    photoUpdateDTO.Photo.CopyTo(stream);
+                }
+
+
+
+
+                user.UPhoto = serverPath + "/Pictures/Users/" + folderName + "/" + imageName;
+
+                context.SaveChanges();
+
+            }
+        }
+
+
 
 
         public UpReviewDTO LeaveReview(UpReviewDTO reviewDTO)
         {
             //long userId = 3; //untill JWT
-            if (_httpContextAccessor == null) return null;
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext== null) return null;
             long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+
+            var revs = context.Reviews.Any(r => r.UserId == userId && r.MovieId == reviewDTO.Movie.ID);
+            if (revs) return null;
+
             var user = context.Users.Find(userId);
 
             var movie = context.Movies.Find(reviewDTO.Movie.ID);
@@ -236,8 +397,8 @@ namespace WebApplication1.Controllers.Services
         public UserDTO UpdateUser(UserDTO User)
         {
             //long userId = 3; // untill JWT
-                          
-            if (_httpContextAccessor == null) return null;
+
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null) return null;
 
             long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
             var user = context.Users.Find(userId);
@@ -247,12 +408,100 @@ namespace WebApplication1.Controllers.Services
             user.LName = User.LName;
             user.Bio = User.Bio;
             user.EMail = User.EMail;
-            user.UPhoto = User.UPhoto;
 
             context.SaveChanges();
 
             return new UserDTO(user);
 
         }
+
+
+
+        public void DeleteReview(long id)
+        {
+            var rev = context.Reviews.Find(id);
+
+            if (rev == null) return;
+
+            var movie = context.Movies.Find(rev.MovieId);
+
+            if (movie == null) return;
+
+            var oldRevGrade = movie.RevGrade * movie.RevCount;
+            if (movie.RevCount <= 1)
+            {
+                movie.RevCount = 0;
+                movie.RevGrade = 0;
+            }
+            else
+            {
+                movie.RevCount = movie.RevCount - 1;
+
+                movie.RevGrade = (oldRevGrade - rev.Grade) / movie.RevCount;
+            }
+
+            context.Reviews.Remove(rev);
+
+            context.SaveChanges();
+        }
+
+        public UpReviewDTO UpdateReview(UpReviewDTO reviewDTO) {
+
+            var rev = context.Reviews.Find(reviewDTO.ID);
+
+            if (rev == null) return null;
+
+           
+
+            if (reviewDTO.Grade != rev.Grade)
+            {
+
+                var movie = context.Movies.Find(rev.MovieId);
+
+                var oldRevGrade = movie.RevGrade * movie.RevCount;
+
+                var newRevGrade = oldRevGrade - rev.Grade + reviewDTO.Grade;
+
+                movie.RevGrade = newRevGrade / movie.RevCount;
+
+
+            }
+
+            rev.Description = reviewDTO.Description;
+
+            rev.Grade = reviewDTO.Grade;
+
+            context.SaveChanges();
+
+            return new UpReviewDTO(rev);
+
+
+
+        }
+
+        public WatchListDTO AddToWatchlist(long movieId)
+        {
+            if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null) return null;
+
+            long userId = long.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+            var user = context.Users.Find(userId);
+            if (user == null) return null;
+
+            var wl = context.WatchLists.Find(user.WatchList.ID);
+
+            if (wl == null) return null;
+
+            var movie = context.Movies.Find(movieId);
+
+            if (movie == null) return null;
+
+            wl.Movies.Add(movie);
+
+            context.SaveChanges();
+
+            return new WatchListDTO(wl);
+
+        }
+
     }
 }

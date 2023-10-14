@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Controllers.Services;
 using WebApplication1.Controllers.Services.Interfaces;
 using WebApplication1.Data.DTO;
 using WebApplication1.Data.Models;
@@ -35,7 +36,7 @@ namespace WebApplication1.Controllers
 
         // POST api/<ProducerController>
         [HttpPost]
-        public ProducerDTO Post(ProducerDTO producer)
+        public ProducerDTO Post([FromForm]ProducerCreateDTO producer)
         {
             return producerService.AddProducer(producer);
         }
@@ -52,6 +53,13 @@ namespace WebApplication1.Controllers
         public void Delete(int id)
         {
             producerService.DeleteProducer(id);
+        }
+
+
+        [HttpPut("UpdatePhoto")]
+        public void updatePhoto([FromForm] PhotoUpdateDTO dto)
+        {
+            producerService.UpdatePhoto(dto);
         }
     }
 }

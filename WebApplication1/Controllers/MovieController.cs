@@ -47,7 +47,7 @@ namespace WebApplication1.Controllers
 
         // POST api/<MovieController>
         [HttpPost]
-        public MovieDTO Post(MovieDTO Movie)
+        public MovieDTO Post([FromForm] MovieCreateDTO Movie)
         {
             return MovieService.AddMovie(Movie);
         }
@@ -65,5 +65,31 @@ namespace WebApplication1.Controllers
         {
             MovieService.DeleteMovie(id);
         }
+
+
+        [HttpPut("UpdatePhoto")]
+        public void updatePhoto([FromForm] PhotoUpdateDTO dto)
+        {
+            MovieService.UpdatePhoto(dto);
+        }
+
+        [HttpDelete("Roles/{id}")]
+        public void DeleteRole(long id)
+        {
+            MovieService.DeleteRole(id);
+        }
+
+        [HttpPut("Producings")]
+        public void DeleteProducing(DownProducingMovieDTO dto)
+        {
+            MovieService.DeleteProducing(dto);
+        }
+
+        [HttpPut("Roles")]
+        public void DeleteRole(RightRoleDTO dto)
+        {
+            MovieService.UpdateRole(dto);
+        }
+
     }
 }

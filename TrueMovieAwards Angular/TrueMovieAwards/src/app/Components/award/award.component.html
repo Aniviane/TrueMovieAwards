@@ -1,0 +1,187 @@
+
+<div *ngIf="!singleDataFlag">
+
+<div *ngFor="let award of Awards" class="mainDiv">
+  <div *ngIf="award.awardType == 'Role'" class="mainDiv">
+        
+    <div class="container" style="margin-bottom: 5%;"  >
+        <h3 style="text-align: center;"> {{award.roleAward.name}}</h3>
+           <div class="row" style="display: flex; justify-content: center;">
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let role of award.roleAward.roles" style=" margin-top: 5%; margin-bottom: 5%;">
+              <div class="card" >
+              
+                <img class="card-img-top"  [src]="makeMyUrlSafe(role.actor.photo)" alt="movie photo" routerLink="/Actors/{{role.actor.id}}">
+              <div class="card-body">
+                <h6 class="card-title" style="text-align: center;">{{role.actor.fname}} {{role.actor.lname}}</h6>
+                <p style="text-align: center;"> AS </p>
+                <h6 class="card-title" style="text-align: center;">{{role.fName}} {{role.lName}}</h6>
+                <p style="text-align: center;"> IN THE MOVIE </p>
+                <h6 class="card-title" style="text-align: center;">{{role.movie.title}}</h6>
+              <div class="card-footer" style="display: flex; justify-content: center;">
+                <button type="button" class="btn btn-primary" routerLink="/Actors/{{role.actor.id}}">Actor Details</button>
+                <button type="button" class="btn btn-primary" routerLink="/Movies/{{role.movie.id}}">Movie Details</button>
+              </div>
+           </div>    
+        </div>
+        </div>
+        </div>
+        </div>
+
+      
+  </div>
+
+  <div *ngIf="award.awardType == 'Movie'" class="mainDiv">
+        
+    <h3 style="text-align: center;"> {{award.movieAward.name}}</h3>
+    <div class="container" >
+        <div class="row">
+          <div class="col-12 col-md-6 col-lg-4" *ngFor="let movie of award.movieAward.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+            <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+              <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+            <div class="card-body">
+              <h6 class="card-title">{{movie.title}}</h6>
+            <div class="card-footer" style="display: flex; justify-content: center;">
+              <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+            </div>
+         </div>    
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>  
+
+  <div *ngIf="award.awardType == 'Producer'" class="mainDiv">
+    <div class="container" style="margin-bottom: 5%;">
+       
+    <h3 style="text-align: center;"> {{award.producerAward.name}}</h3>
+        <div class="row">
+          <div class="col-12 col-md-6 col-lg-4" *ngFor="let producing of award.producerAward.producings" style=" margin-top: 5%; margin-bottom: 5%;">
+            <div class="card" >
+            
+              <img class="card-img-top"  [src]="makeMyUrlSafe(producing.producer.photo)" alt="movie photo" routerLink="/Producers/{{producing.producer.id}}">
+            <div class="card-body">
+              <h6 class="card-title" style="text-align: center;">{{producing.producer.fName}} {{producing.producer.lName}}</h6>
+              <p class="card-text" style="text-align: center;">FOR THE PRODUCTION OF</p>
+              <h6 class="card-title" style="text-align: center;">{{producing.movie.title}}</h6>
+            <div class="card-footer">
+              <button type="button" class="btn btn-primary" routerLink="/Producers/{{producing.producer.id}}">Producers Details</button>
+              <button type="button" class="btn btn-primary" routerLink="/Movies/{{producing.movie.id}}">Movies Details</button>
+            </div>
+         </div>    
+      </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+
+</div>
+
+
+
+</div>
+<div *ngIf="singleDataFlag" class="mainDiv">
+    
+    <div *ngIf="singleAward.awardType == 'Role'">
+        
+        <div class="container" style="margin-bottom: 5%;"  >
+            <h3 style="text-align: center;"> {{singleAward.roleAward.name}}</h3>
+               <div class="row" style="display: flex; justify-content: center;">
+                <div class="col-12 col-md-6 col-lg-4" *ngFor="let role of singleAward.roleAward.roles" style=" margin-top: 5%; margin-bottom: 5%;">
+                  <div class="card" >
+                  
+                    <img class="card-img-top"  [src]="makeMyUrlSafe(role.actor.photo)" alt="movie photo" routerLink="/Actors/{{role.actor.id}}">
+                  <div class="card-body">
+                    <h6 class="card-title" style="text-align: center;">{{role.actor.fname}} {{role.actor.lname}}</h6>
+                    <p style="text-align: center;"> AS </p>
+                    <h6 class="card-title" style="text-align: center;">{{role.fName}} {{role.lName}}</h6>
+                    <p style="text-align: center;"> IN THE MOVIE </p>
+                    <h6 class="card-title" style="text-align: center;">{{role.movie.title}}</h6>
+                  <div class="card-footer" style="display: flex; justify-content: center;">
+                    <button type="button" class="btn btn-primary" routerLink="/Actors/{{role.actor.id}}">Actor Details</button>
+                    <button type="button" class="btn btn-primary" routerLink="/Movies/{{role.movie.id}}">Movie Details</button>
+                  </div>
+               </div>    
+            </div>
+            </div>
+            </div>
+            </div>
+    </div>
+    <div *ngIf="singleAward.awardType == 'Movie'" class="mainDiv">
+        
+        <h3 style="text-align: center;"> {{singleAward.movieAward.name}}</h3>
+        <div class="container" >
+            <div class="row">
+              <div class="col-12 col-md-6 col-lg-4" *ngFor="let movie of singleAward.movieAward.movies" style=" margin-top: 5%; margin-bottom: 5%;">
+                <div class="card border-info" style="border-style: solid; border-width: 3px;" >
+                  <img class="card-img-top"  [src]="makeMyUrlSafe(movie.photo)" alt="movie photo" routerLink="/Movies/{{movie.id}}">
+                <div class="card-body">
+                  <h6 class="card-title">{{movie.title}}</h6>
+                <div class="card-footer" style="display: flex; justify-content: center;">
+                  <button type="button" class="btn btn-primary" routerLink="/Movies/{{movie.id}}">Details</button>
+                </div>
+             </div>    
+          </div>
+        </div>
+        </div>
+        </div>
+    </div>
+    <div *ngIf="singleAward.awardType == 'Producer'" class="mainDiv">
+        <div class="container" style="margin-bottom: 5%;">
+           
+        <h3 style="text-align: center;"> {{singleAward.producerAward.name}}</h3>
+            <div class="row">
+              <div class="col-12 col-md-6 col-lg-4" *ngFor="let producing of singleAward.producerAward.producings" style=" margin-top: 5%; margin-bottom: 5%;">
+                <div class="card" >
+                
+                  <img class="card-img-top"  [src]="makeMyUrlSafe(producing.producer.photo)" alt="movie photo" routerLink="/Producers/{{producing.producer.id}}">
+                <div class="card-body">
+                  <h6 class="card-title" style="text-align: center;">{{producing.producer.fName}} {{producing.producer.lName}}</h6>
+                  <p class="card-text" style="text-align: center;">FOR THE PRODUCTION OF</p>
+                  <h6 class="card-title" style="text-align: center;">{{producing.movie.title}}</h6>
+                <div class="card-footer">
+                  <button type="button" class="btn btn-primary" routerLink="/Producers/{{producing.producer.id}}">Producers Details</button>
+                  <button type="button" class="btn btn-primary" routerLink="/Movies/{{producing.movie.id}}">Movies Details</button>
+                </div>
+             </div>    
+          </div>
+        </div>
+        </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+   
+
+  <div class="modal fade" id="updateAwardModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form (ngSubmit)="updateAward()">
+        <div class="modal-body">
+          <p>Please enter your Award name</p>
+  
+          <label for="aUPhoto">Award Name : </label>
+          <input class="form-control" type="text" name="AwardName" [(ngModel)]="updateAwardName">
+         
+
+         
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update Award Name</button>
+        </div>
+      </form>
+      </div>
+    </div>
+    </div>
+  

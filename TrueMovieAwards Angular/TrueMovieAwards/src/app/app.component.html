@@ -1,0 +1,173 @@
+<head> 
+   </head>
+
+
+<nav style="background-color: rgb(252, 172, 0); display: flex; justify-content: space-evenly;">
+  <h3 style="text-align: center; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Welcome to IMDB </h3> <h3 style="color:forestgreen;  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ">2</h3> 
+  <div style="justify-content: left; align-content: center; margin: auto;">
+  <button class="btn btn-secondary" style="justify-self: left;" routerLink="Actors">Actors</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Movies">Movies</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Producers"> Producers</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Festivals">Festivals</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Series">Series</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Studios">Studios</button>
+  <button class="btn btn-secondary" style="margin: auto; align-self: center;" routerLink="Genres">Genres</button>
+
+  
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" style="margin: auto; align-self: center;" data-toggle="modal" data-target="#loginModal" *ngIf="!loggedIn">
+      Login
+    </button>
+    <button type="button" class="btn btn-primary" style="margin: auto; align-self: center;" (click)="logOut()" *ngIf="loggedIn">
+      Log Out
+    </button>
+    
+      <!-- Button trigger modal -->
+
+    
+    
+    <button type="button" class="btn btn-primary" style="margin: auto; align-self: center;" data-toggle="modal" data-target="#RegisterModal" *ngIf="!loggedIn">
+      Register
+    </button>
+ 
+
+    <button type="button" class="btn btn-primary"  *ngIf="loggedIn && amIAdmin()" data-toggle="modal" data-target="#RegisterModeratorModal">
+      Add Moderator
+    </button>
+
+    <button type="button" class="btn btn-primary"  *ngIf="loggedIn && amIGeneral()" (click)="showMyProfile()">
+      My Profile
+    </button>
+
+    <button type="button" class="btn btn-primary"  *ngIf="loggedIn && amIModerator()" routerLink="AddMovie">
+      Add Movie
+    </button>
+
+    <button type="button" class="btn btn-primary" style="margin-right: 50px;"  *ngIf="loggedIn && amIAdmin()" routerLink="Users">
+      Users
+    </button>
+  </div>
+  <h4 *ngIf="loggedIn">Welcome {{username}}</h4>
+</nav>
+
+
+
+
+<router-outlet></router-outlet>
+<!-- LOGINModal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Please Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please enter your credentials</p>
+  
+          <form [formGroup]="loginForm">
+            <label>Username: </label>
+            <input class="form-control" style="border-width: 3px; border-color:lightslategrey;" type="text" #User formControlName="Username"><br>
+            <label>Password: </label>
+            <input class="form-control" style="border-width: 3px; border-color:lightslategrey;" type="password" #pass name="password" formControlName="Password"><br>
+          </form>
+          <p *ngIf="errorFlag" style="color: red">Username or password invalid</p>
+          <p *ngIf="!errorFlag && loggedIn" style="color: green">Login successful! Welcome {{username}}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="login()">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- RegisterModal -->
+  <div class="modal fade" id="RegisterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="registerForm">
+        <div class="modal-body">
+          <p>Please enter your registration credentials</p>
+  
+          <table>
+            <tr>
+              <td><label for="Username">Username: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="text" formControlName="Username"></td>
+            </tr>
+            <tr>
+              <td><label>Password: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="password" formControlName="Password"></td>
+            </tr>
+            <tr>
+              <td><label >Email: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="mail" formControlName="EMail"></td>
+            </tr>
+            <tr>
+              <td><label >First Name: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="text" formControlName="FName"></td>
+            </tr>
+            <tr>
+              <td><label >Last Name: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="text" formControlName="LName"></td>
+            </tr>
+            <tr>
+              <td><label >Bio: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="text" formControlName="Bio"></td>
+            </tr>
+            <tr>
+              <td><label >Your picture: </label></td>
+              <td><input style="width: 300px;"  class="form-control"  type="file" (change)="onChange($event)"></td>
+            </tr>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" [disabled]="registerForm.invalid" (click)="register()">Registration</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+  
+  <!-- RegisterModal -->
+  <div class="modal fade" id="RegisterModeratorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form [formGroup]="registerModeratorForm">
+        <div class="modal-body">
+          <p>Please enter Moderator's registration credentials</p>
+  
+          
+            <label for="Username">Username: </label>
+            <input class="form-control" type="text" #Username formControlName="Username"><br>
+            <label for="Password">Password: </label>
+            <input class="form-control" type="password" #Password formControlName="Password"><br>
+
+          
+        </div>
+        <div class="modal-footer">
+          
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" [disabled]="registerModeratorForm.invalid" (click)="registerModerator()">Registration</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+ 
